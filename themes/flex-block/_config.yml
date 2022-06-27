@@ -1,0 +1,85 @@
+# Header
+menu:
+  首页: /
+  友链: /links
+  关于: /about
+
+# 主页banner图
+banner: /images/banner.jpeg
+
+# 站点通知信息
+notice: Hi there 👋 Welcome to my blog space,hope you hava a good day~
+
+# 作者信息
+author:
+  name: KeyToLove
+  avatar: https://avatars.githubusercontent.com/u/54970106?v=4
+  description: Think twice code once
+
+toc:
+  max_depth: 3 # 生成 TOC 的最大深度
+  min_depth: 2 # 生成 TOC 的最小深度
+
+comments:
+  enable: false
+  use: 'valine' # valine || disqus
+  # valine 评论
+  # docs: https://valine.js.org
+  # You can get your appid and appkey from https://leancloud.cn
+  # 这里appId和appKey一定一定要改成自己的，没有的话去https://leancloud.cn这个网站注册创建一个
+  valine:
+    appId:
+    appKey:
+    avatar: mm
+    placeholder: 随便说点什么叭～
+    notify: true
+    visitor: true
+    pageSize: 10
+  # disqus 评论
+  # docs: https://disqus.com/
+  disqus:
+    website:
+    error: 如果你看不到评论，那么就真的看不到评论 w(゜Д゜)w
+
+# dplayer 视频播放
+# docs: http://dplayer.js.org/#/zh-Hans/
+dplayer:
+  enable: true
+  theme: '#b7daff'
+  autoplay: false
+  loop: false
+  mutex: true
+
+# aplayer 音频播放
+# docs: https://aplayer.js.org/#/zh-Hans/
+aplayer:
+  enable: true
+  theme: '#b7daff'
+  autoplay: false
+  loop: false
+  mutex: true
+  lrcType: 3
+
+# 国内备案信息
+beian:
+
+# 谷歌分析
+google_analytics:
+# gauges分析
+gauges_analytics:
+# 百度分析
+baidu_analytics:
+# 腾讯分析
+tencent_analytics:
+# 站点ico
+favicon: /favicon.ico
+
+# Social Icon
+social_icon:
+  enable: true
+  icons:
+    ins:
+    zhihu:
+    weibo:
+    github: https://github.com/KeyToLove
+    twitter:
