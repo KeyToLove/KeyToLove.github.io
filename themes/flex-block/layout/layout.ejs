@@ -53,6 +53,9 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/styles/<%= config.highlight.theme || 'monokai' %>.css">
   <% } %>
 
+  <!-- 修复代码块高亮失败问题 -->
+  <link rel="stylesheet" href="/css/highlight.css">
+
   <%- css('css/style') %>
 </head>
 <body>
