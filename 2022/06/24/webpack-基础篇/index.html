@@ -26,7 +26,7 @@
 
   
 
-  <title>webpack-5.x配置-基础篇 | KeyToLove Blog Space</title>
+  <title>webpack-基础篇 | KeyToLove Blog Space</title>
 
   
 
@@ -34,10 +34,10 @@
     <link rel="shortcut icon" href="/favicon.ico">
   
 
-  
+  <!-- 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@1.1.3/index.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/styles/monokai.css">
-  
+   -->
 
   <!-- 修复代码块高亮失败问题 -->
   <link rel="stylesheet" href="/css/highlight.css">
@@ -52,7 +52,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/banner.jpeg)"></div>
+    <div class="post-image" style="background-image: url(/images/cover2.jpeg)"></div>
   
 
   <!-- navbar -->
@@ -103,7 +103,7 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">webpack-5.x配置-基础篇</h1>
+          <h1 class="title-wrap">webpack-基础篇</h1>
           <h2 class="title-sub-wrap">
             <strong>KeyToLove</strong>
             <span>发布于</span>
@@ -140,7 +140,8 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="webpack-是什么"><a href="#webpack-是什么" class="headerlink" title="webpack 是什么?"></a>webpack 是什么?</h2><blockquote>
+        <p><b style="font-size:18px;color:red">tips: 本文及后续 webpack 相关文章如未特殊声明，都是在基于 5.x 版本进行文章编写</b></p>
+<h2 id="webpack-是什么"><a href="#webpack-是什么" class="headerlink" title="webpack 是什么?"></a>webpack 是什么?</h2><blockquote>
 <p>本质上，webpack 是一个用于现代 JavaScript 应用程序的静态模块打包工具。当 webpack 处理应用程序时，它会在内部构建一个 依赖图(dependency graph)，此依赖图对应映射到项目所需的每个模块，并生成一个或多个 bundle。</p>
 </blockquote>
 <p>现在开源社区中，与 webpack 功能相似的有 rollup、vite 等，在这我做一下简单的介绍</p>
@@ -267,9 +268,27 @@
       
         <nav class="article-nav">
           
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover3.jpeg"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2022/06/28/webpack-%E4%BC%98%E5%8C%96%E7%AF%87%20(code-split)/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">webpack-优化篇 (code split)</h2>
+        </a>
+      
+      <div class="card-text--row">Newer</div>
+    </div>
+  </article>
+</div>
+          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover1.jpeg"></div>
     
     <div class="card-text">
       
@@ -316,7 +335,7 @@
         <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
 </svg>
-        <span>2</span>
+        <span>3</span>
       </div>
       <div class="count-box--item">
         <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -361,14 +380,14 @@
     <ul class="categorys-list">
       
         <li class="categorys-list-item">
-          <a href="/categories/test/">
-            test (1)
+          <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
+            前端工程化 (2)
           </a>
         </li>
       
         <li class="categorys-list-item">
-          <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
-            前端工程化 (1)
+          <a href="/categories/test/">
+            test (1)
           </a>
         </li>
       
@@ -385,7 +404,7 @@
   </div>
   <div class="widget-body">
     <div class="tags-cloud">
-      <a href="/tags/hexo/" style="font-size: 10px;" class="tags-cloud-0">hexo</a> <a href="/tags/webpack/" style="font-size: 10px;" class="tags-cloud-0">webpack</a>
+      <a href="/tags/hexo/" style="font-size: 10px;" class="tags-cloud-0">hexo</a> <a href="/tags/webpack/" style="font-size: 20px;" class="tags-cloud-10">webpack</a>
     </div>
   </div>
 </section>

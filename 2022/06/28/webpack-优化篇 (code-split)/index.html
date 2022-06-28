@@ -26,7 +26,7 @@
 
   
 
-  <title>友情链接 | KeyToLove Blog Space</title>
+  <title>webpack-优化篇 (code split) | KeyToLove Blog Space</title>
 
   
 
@@ -50,9 +50,9 @@
   <div class="root-container">
     
 <!-- header container -->
-<header class="header-container">
+<header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/banner.jpeg)"></div>
+    <div class="post-image" style="background-image: url(/images/cover3.jpeg)"></div>
   
 
   <!-- navbar -->
@@ -100,64 +100,103 @@
 
   
   
-
-  
-  
     <div class="header-content">
-      <div class="post-text layout-block layout-padding">
-        <h1 class="title-wrap">友情链接</h1>
-        
+      <div class="post-text layout-block">
+        <div class="layout-margin">
+          <h1 class="title-wrap">webpack-优化篇 (code split)</h1>
+          <h2 class="title-sub-wrap">
+            <strong>KeyToLove</strong>
+            <span>发布于</span>
+            <time  class="article-date" datetime="2022-06-28T08:26:31.000Z" itemprop="datePublished">2022-06-28</time>
+          </h2>
+          <ul class="wrap-list dark">
+  
+    <li><a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">📒 前端工程化</a></li>
+  
+</ul>
+          <ul class="wrap-list dark">
+  
+    <li><a href="/tags/webpack/">🏷️ webpack</a></li>
+  
+</ul>
+        </div>
       </div>
     </div>
+  
+
+  
   
   
 </header>
 
-    <!-- 分页(其他自定义页面) -->
+    <!-- 文章 -->
 
-<!-- 自定义页面 -->
-
+<!-- 文章内容 -->
 <div class="body-container">
   <article class="content-container layout-block post-container">
     <div class="article-info">
       
+      
+      
+      
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h1>欢迎添加友情链接👭</h1>
+        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>一般来讲，基于 webpack 的 spa 应用，如果没有额外配置，所有的 js 经过打包后都会整合到一个 chunk 中，这就可能会导致这个 chunk 的体积过大，用户通过浏览器访问我们应用时就需要花费更多的时间来下载资源</p>
+<h3 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h3><ol>
+<li><p>我们可以把较大的资源根据实际情况拆分成小的模块，利用 http 可以并行请求资源的特点，大幅节省下载资源的时间开销</p>
+</li>
+<li><p>合理的代码分割也可以帮我们剔除模块中重复引入的代码（eg：node_modules 中的依赖抽离出来单独打包成一个 chunk），节省项目体积</p>
+</li>
+<li><p>多页面应用通过分包可以只加载当前 html 页面的资源，节省流量，优化用户体验</p>
+</li>
+</ol>
+<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>单页面应用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// webpack.config.js</span></span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="comment">// ...省略无关配置</span></span><br><span class="line">  <span class="attr">optimization</span>: &#123;</span><br><span class="line">    <span class="attr">splitChunks</span>: &#123;</span><br><span class="line">      <span class="attr">cacheGroups</span>: &#123;</span><br><span class="line">        <span class="attr">vendor</span>: &#123;</span><br><span class="line">          <span class="attr">test</span>: <span class="regexp">/[\\/]node_modules[\\/]/</span>,</span><br><span class="line">          <span class="attr">chunks</span>: <span class="string">&#x27;all&#x27;</span>,</span><br><span class="line">          <span class="attr">name</span>: <span class="string">&#x27;vendor&#x27;</span>,</span><br><span class="line">          <span class="attr">priority</span>: <span class="number">10</span>, <span class="comment">// 优先级</span></span><br><span class="line">          <span class="attr">enforce</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">minChunks</span>: <span class="number">1</span>,</span><br><span class="line">          <span class="attr">maxSize</span>: <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">10</span>, <span class="comment">// 最大10m</span></span><br><span class="line">        &#125;,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h4>可以通过在github该仓库提issue的方式提供如下必要信息：</h4>
+<p>经过这么配置，最终会生成两个 js 的 chunk，一个是对应入口文件生成的 chunk 文件，另一个则是将我们应用中引入的依赖分割出去生成一个 chunk</p>
+<p>多页面应用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&#x27;path&#x27;</span>)</span><br><span class="line"><span class="keyword">const</span> <span class="title class_">HtmlWebpackPlugin</span> = <span class="built_in">require</span>(<span class="string">&#x27;html-webpack-plugin&#x27;</span>)</span><br><span class="line"><span class="variable language_">module</span>.<span class="property">exports</span> = &#123;</span><br><span class="line">  <span class="comment">// ...省略无关配置</span></span><br><span class="line">  <span class="attr">entry</span>: &#123;</span><br><span class="line">    <span class="attr">main</span>: <span class="string">&#x27;./src/index.js&#x27;</span>,</span><br><span class="line">    <span class="attr">other</span>: <span class="string">&#x27;./src/other.js&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">output</span>: &#123;</span><br><span class="line">    <span class="attr">path</span>: path.<span class="title function_">resolve</span>(__dirname, <span class="string">&#x27;dist&#x27;</span>),</span><br><span class="line">    <span class="attr">filename</span>: <span class="string">&#x27;js/[name].[contenthash:6].js&#x27;</span>,</span><br><span class="line">  &#125;,</span><br><span class="line">  <span class="attr">plugins</span>: [</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">HtmlWebpackPlugin</span>(&#123;</span><br><span class="line">      <span class="attr">template</span>: <span class="string">&#x27;./src/index.html&#x27;</span>,</span><br><span class="line">      <span class="attr">filename</span>: <span class="string">&#x27;index.html&#x27;</span>,</span><br><span class="line">      <span class="attr">title</span>: <span class="string">&#x27;index&#x27;</span>,</span><br><span class="line">      <span class="attr">chunks</span>: [<span class="string">&#x27;vendor&#x27;</span>, <span class="string">&#x27;main&#x27;</span>], <span class="comment">// 指定只需要引入的chunks</span></span><br><span class="line">    &#125;),</span><br><span class="line">    <span class="keyword">new</span> <span class="title class_">HtmlWebpackPlugin</span>(&#123;</span><br><span class="line">      <span class="attr">template</span>: <span class="string">&#x27;./src/index.html&#x27;</span>,</span><br><span class="line">      <span class="attr">filename</span>: <span class="string">&#x27;other.html&#x27;</span>,</span><br><span class="line">      <span class="attr">title</span>: <span class="string">&#x27;other&#x27;</span>,</span><br><span class="line">      <span class="attr">chunks</span>: [<span class="string">&#x27;vendor&#x27;</span>, <span class="string">&#x27;other&#x27;</span>], <span class="comment">// 指定只需要引入的chunks</span></span><br><span class="line">    &#125;),</span><br><span class="line">  ],</span><br><span class="line">  <span class="attr">optimization</span>: &#123;</span><br><span class="line">    <span class="attr">splitChunks</span>: &#123;</span><br><span class="line">      <span class="attr">cacheGroups</span>: &#123;</span><br><span class="line">        <span class="attr">vendor</span>: &#123;</span><br><span class="line">          <span class="attr">test</span>: <span class="regexp">/[\\/]node_modules[\\/]/</span>,</span><br><span class="line">          <span class="attr">chunks</span>: <span class="string">&#x27;all&#x27;</span>,</span><br><span class="line">          <span class="attr">name</span>: <span class="string">&#x27;vendor&#x27;</span>,</span><br><span class="line">          <span class="attr">priority</span>: <span class="number">10</span>, <span class="comment">// 优先级</span></span><br><span class="line">          <span class="attr">enforce</span>: <span class="literal">true</span>,</span><br><span class="line">          <span class="attr">minChunks</span>: <span class="number">1</span>,</span><br><span class="line">          <span class="attr">maxSize</span>: <span class="number">1024</span> * <span class="number">1024</span> * <span class="number">10</span>, <span class="comment">// 最大10m</span></span><br><span class="line">        &#125;,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<div>示例</div>
-<ul>
-<li>昵称: Mike</li>
-<li>头像地址: http://example.jpg</li>
-<li>简介: 大帅比一个</li>
-</ul>
+<p>多页面应用通过指定多入口文件会自动生成对应每个入口文件的 chunk，比如以上配置最终会生成 <code>main.[hash]</code> 、 <code>other.[hash]</code> 、 <code>vendor.[hash]</code>三个 chunk 文件，分别对应其入口文件以及它们所引入的 node_modules 中的依赖</p>
+<p>值得注意的是我们不要忘了给<code>html-webpack-plugin</code>添加<code>chunks</code>的配置，来让我们对应的 html 文件只引入其所需的 chunks，而不是引入所有 chunks</p>
 
       </section>
 
       
       
-        <section class="page-link-container">
+        <nav class="article-nav">
           
-            <div class="link-item layout-padding">
-              <a href="javascript:;" title="测试友情链接" class="content-padding--primary soft-size--primary soft-style--box" target="_blank" rel="noopener noreferrer">
-                
-                <img src="https://avatars.githubusercontent.com/u/54970106?v=4" alt="测试友情链接" class="soft-size--round soft-style--box">
-                
-                <div>
-                  <h4 class="text-ellipsis">测试友情链接</h4>
-                  
-                  <p class="text-ellipsis">这是一条友情链接</p>
-                  
-                </div>
-              </a>
-            </div>
           
-        </section>
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover2.jpeg"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2022/06/24/webpack-%E5%9F%BA%E7%A1%80%E7%AF%87/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">webpack-基础篇</h2>
+        </a>
+      
+      <div class="card-text--row">Older</div>
+    </div>
+  </article>
+</div>
+          
+        </nav>
       
 
-      
-      
+      <section class="page-message-container layout-padding">
+        
+
+
+  
+  
+
+  
+  
+
+
+      </section>
     </div>
     <div class="widget-info">
       <section class="widget-author widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
@@ -194,6 +233,8 @@
     </div>
   </div>
 </section>
+
+      
 
       
 <section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
@@ -251,7 +292,6 @@
     </div>
   </article>
 </div>
-
 
     <!-- footer container -->
 <footer id="footer" class="footer">
