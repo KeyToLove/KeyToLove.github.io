@@ -1,9 +1,12 @@
 ---
-title: webpack-5.x配置-基础篇
+title: webpack-基础篇
 date: 2022-06-24 14:35:31
 tags: webpack
 categories: 前端工程化
+cover: /images/cover2.jpeg
 ---
+
+<b style="font-size:18px;color:red">tips: 本文及后续 webpack 相关文章如未特殊声明，都是在基于 5.x 版本进行文章编写</b>
 
 ## webpack 是什么?
 
@@ -51,12 +54,12 @@ npm i webpack webpack-cli -D
 
 让我们随便写点什么～
 
-``` js
+```js
 // src/index.js
 const p = 'mike'
 ```
 
-``` javascript
+```javascript
 // webpack.config.js
 const path = require('path')
 module.exports = {
