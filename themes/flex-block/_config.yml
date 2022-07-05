@@ -21,20 +21,22 @@ toc:
   min_depth: 2 # 生成 TOC 的最小深度
 
 comments:
-  enable: false
+  enable: true
   use: 'valine' # valine || disqus
   # valine 评论
   # docs: https://valine.js.org
   # You can get your appid and appkey from https://leancloud.cn
   # 这里appId和appKey一定一定要改成自己的，没有的话去https://leancloud.cn这个网站注册创建一个
   valine:
-    appId:
-    appKey:
+    appId: epr01NN7HOiKlcWCvdv8swkK-gzGzoHsz
+    appKey: tljBAMawJJHIlAT6oYAnGBz6
     avatar: mm
     placeholder: 随便说点什么叭～
     notify: true
-    visitor: true
+    visitor: true # 统计浏览量
     pageSize: 10
+    enableQQ: true # 是否开启昵称输入框自动获取QQ昵称和头像功能
+    requiredFields: nick,mail
   # disqus 评论
   # docs: https://disqus.com/
   disqus:
