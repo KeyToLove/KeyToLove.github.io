@@ -183,6 +183,30 @@
 
   
   
+    <div class="valine-container comments-container content-padding--primary soft-size--large soft-style--box">
+      <div id="valine_thread" class="valine-thread"></div>
+    </div>
+    <!-- id 将作为查询条件 -->
+    <div id="Hello World" class="leancloud_visitors" data-flag-title="Your Article Title">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count">1000000</i>
+    </div>
+    <!-- <script type="text/javascript" src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script> -->
+    <script type="text/javascript" src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <script type="text/javascript">
+      new Valine({
+        el: "#valine_thread",
+        appId: "epr01NN7HOiKlcWCvdv8swkK-gzGzoHsz",
+        appKey: "tljBAMawJJHIlAT6oYAnGBz6",
+        avatar: "mm",
+        placeholder: "随便说点什么叭～",
+        notify: true,
+        visitor: true,
+        pageSize: 10,
+        enableQQ: true,
+      });
+    </script>
+  
 
   
   
@@ -253,14 +277,14 @@
     <ul class="categorys-list">
       
         <li class="categorys-list-item">
-          <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
-            前端工程化 (2)
+          <a href="/categories/test/">
+            test (1)
           </a>
         </li>
       
         <li class="categorys-list-item">
-          <a href="/categories/test/">
-            test (1)
+          <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
+            前端工程化 (2)
           </a>
         </li>
       

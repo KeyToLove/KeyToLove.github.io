@@ -270,6 +270,9 @@ dfn {
 .content-padding--primary {
   padding: var(--content-primary-padding);
 }
+.leancloud_visitors {
+  margin-top: 20px;
+}
 [class*=soft-size--].soft-size--large {
   --radius: var(--soft-large-radius);
 }
