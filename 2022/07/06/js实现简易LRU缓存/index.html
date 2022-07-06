@@ -26,7 +26,7 @@
 
   
 
-  <title>webpack-优化篇 (code split) | KeyToLove Blog Space</title>
+  <title>js实现简易LRU缓存 | KeyToLove Blog Space</title>
 
   
 
@@ -49,7 +49,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(https://pic.jitudisk.com/public/2022/07/05/5efdd71dc79e6.jpeg)"></div>
+    <div class="post-image" style="background-image: url(https://pic.jitudisk.com/public/2022/07/05/1af5bcf80bfe0.jpeg)"></div>
   
 
   <!-- navbar -->
@@ -100,20 +100,18 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">webpack-优化篇 (code split)</h1>
+          <h1 class="title-wrap">js实现简易LRU缓存</h1>
           <h2 class="title-sub-wrap">
             <strong>KeyToLove</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2022-06-28T08:26:31.000Z" itemprop="datePublished">2022-06-28</time>
+            <time  class="article-date" datetime="2022-07-06T03:07:35.000Z" itemprop="datePublished">2022-07-06</time>
           </h2>
           <ul class="wrap-list dark">
-  
-    <li><a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">📒 前端工程化</a></li>
   
 </ul>
           <ul class="wrap-list dark">
   
-    <li><a href="/tags/webpack/">🏷️ webpack</a></li>
+    <li><a href="/tags/%E7%AE%97%E6%B3%95/">🏷️ 算法</a></li>
   
 </ul>
         </div>
@@ -137,30 +135,49 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>一般来讲，基于 webpack 的 spa 应用，如果没有额外配置，所有的 js 经过打包后都会整合到一个 chunk 中，这就可能会导致这个 chunk 的体积过大，用户通过浏览器访问我们应用时就需要花费更多的时间来下载资源</p>
-<h3 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h3><ol>
-<li><p>我们可以把较大的资源根据实际情况拆分成小的模块，利用 http 可以并行请求资源的特点，大幅节省下载资源的时间开销</p>
-</li>
-<li><p>合理的代码分割也可以帮我们剔除模块中重复引入的代码（eg：node_modules 中的依赖抽离出来单独打包成一个 chunk），节省项目体积</p>
-</li>
-<li><p>多页面应用通过分包可以只加载当前 html 页面的资源，节省流量，优化用户体验</p>
-</li>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>算法就是从<code>input</code>到<code>output</code>的过程一个实现，因此我们在学习或琢磨算法问题时应该先捋清思路，明确我们需要得到的是什么，试着列举从输入到输出我们需要处理的任务项，逐个实现。</p>
+<h2 id="什么是-LRU-缓存"><a href="#什么是-LRU-缓存" class="headerlink" title="什么是 LRU 缓存"></a>什么是 LRU 缓存</h2><p>首先我们看看百度百科对 LRU 的描述</p>
+<blockquote>
+<p>LRU 是 Least Recently Used 的缩写，即最近最少使用，是一种常用的页面置换算法，选择最近最久未使用的页面予以淘汰。该算法赋予每个页面一个访问字段，用来记录一个页面自上次被访问以来所经历的时间 t，当须淘汰一个页面时，选择现有页面中其 t 值最大的，即最近最少使用的页面予以淘汰。</p>
+</blockquote>
+<p>针对百度百科的描述，举个例子：我们在使用浏览器浏览窗口时候，我们一个接一个的访问新的页面，内存将我们这些页面进行了缓存以方便我们稍后回过头访问；但是随着时间的推移，不断新增的新页即将塞满浏览器有限的内存，这个时候为了保证浏览器仍能正常工作，我们不得不删除页面来减少内存的占用；删除哪些页面呢？可以按访问的先后顺序或者说一个标准，<code>LRU</code>缓存就是这么一个标准，把<strong>最近时间内，最久未访问</strong>的页面给干掉。</p>
+<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
+<li>系统底层的内存管理</li>
+<li>页面的置换算法</li>
+<li>一般的缓存服务，memcache、redis 之类</li>
+<li>部分资源有限的业务场景</li>
 </ol>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>单页面应用</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...省略无关配置</span><br>  <span class="hljs-attr">optimization</span>: &#123;<br>    <span class="hljs-attr">splitChunks</span>: &#123;<br>      <span class="hljs-attr">cacheGroups</span>: &#123;<br>        <span class="hljs-attr">vendor</span>: &#123;<br>          <span class="hljs-attr">test</span>: <span class="hljs-regexp">/[\\/]node_modules[\\/]/</span>,<br>          <span class="hljs-attr">chunks</span>: <span class="hljs-string">&#x27;all&#x27;</span>,<br>          <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;vendor&#x27;</span>,<br>          <span class="hljs-attr">priority</span>: <span class="hljs-number">10</span>, <span class="hljs-comment">// 优先级</span><br>          <span class="hljs-attr">enforce</span>: <span class="hljs-literal">true</span>,<br>          <span class="hljs-attr">minChunks</span>: <span class="hljs-number">1</span>,<br>          <span class="hljs-attr">maxSize</span>: <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">10</span>, <span class="hljs-comment">// 最大10m</span><br>        &#125;,<br>      &#125;,<br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="简易实现"><a href="#简易实现" class="headerlink" title="简易实现"></a>简易实现</h2><p>经过分析我们不难得出 <code>LRU</code> 有如下特点：</p>
+<ul>
+<li>资源有限，假使资源无限我们也就不需要利用 <code>LRU</code> 进行删除处理·</li>
+<li>存储空间需要是有序的,因为有序的数据结构才能让我们按顺序删除数据的以节省条件查询的时间,<code>javascript</code>中可采用<code>Arrary</code>、<code>Map</code>数据结构</li>
+<li>存储空间达到上限时再新增数据，自动删除记录中最久远的数据</li>
+<li>能从我们的存储的数据结构中获取和设置指定数据(get &amp; set)</li>
+</ul>
+<p>下面就用代码来实现这么一个满足特性的<code>LRUCache</code>类</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LRUCache</span> &#123;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">size</span>) &#123;<br>    <span class="hljs-comment">// 特性1: 资源有限 初始化存储空间大小</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span> = size<br>    <span class="hljs-comment">// 特性2: 存储空间数据结构的有序性 初始化数据存储结构(Map 存取时间复杂度优，因此优先考虑)</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>()<br>  &#125;<br>  <span class="hljs-comment">// 获取指定数据</span><br>  <span class="hljs-title function_">get</span>(<span class="hljs-params">key</span>) &#123;<br>    <span class="hljs-keyword">const</span> &#123; data &#125; = <span class="hljs-variable language_">this</span><br>    <span class="hljs-comment">// 未找到提前 return</span><br>    <span class="hljs-keyword">if</span> (!data.<span class="hljs-title function_">has</span>(key)) &#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span><br>    &#125;<br>    <span class="hljs-keyword">const</span> value = data.<span class="hljs-title function_">get</span>(key)<br>    <span class="hljs-comment">// 通过先移除再重新插入的方式更新该数据在存储空间中的排序至最新</span><br>    data.<span class="hljs-title function_">delete</span>(key)<br>    data.<span class="hljs-title function_">set</span>(key, value)<br>    <span class="hljs-keyword">return</span> value<br>  &#125;<br>  <span class="hljs-comment">// 存储指定数据</span><br>  <span class="hljs-title function_">set</span>(<span class="hljs-params">key, value</span>) &#123;<br>    <span class="hljs-keyword">const</span> &#123; data, size &#125; = <span class="hljs-variable language_">this</span><br>    <span class="hljs-comment">// 已存在数据先移除默认记录后续更新排序</span><br>    <span class="hljs-keyword">if</span> (data.<span class="hljs-title function_">has</span>(key)) &#123;<br>      data.<span class="hljs-title function_">delete</span>(key)<br>    &#125;<br>    <span class="hljs-comment">// 已达到存储上限，自动删除最久远历史数据</span><br>    <span class="hljs-keyword">if</span> (data.<span class="hljs-property">size</span> === size) &#123;<br>      <span class="hljs-keyword">const</span> _key = data.<span class="hljs-title function_">keys</span>().<span class="hljs-title function_">next</span>().<span class="hljs-property">value</span><br>      data.<span class="hljs-title function_">delete</span>(_key)<br>    &#125;<br>    <span class="hljs-comment">// 设置/更新数据</span><br>    data.<span class="hljs-title function_">set</span>(key, value)<br>    <span class="hljs-comment">// 返回当前实例方便链式掉用</span><br>    <span class="hljs-comment">// const l = new LRUCache(3)</span><br>    <span class="hljs-comment">// l.set(&#x27;k1&#x27;,&#x27;v1&#x27;).set(&#x27;k2&#x27;,&#x27;v2&#x27;)</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>经过这么配置，最终会生成两个 js 的 chunk，一个是对应入口文件生成的 chunk 文件，另一个则是将我们应用中引入的依赖分割出去生成一个 chunk</p>
-<p>多页面应用</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...省略无关配置</span><br>  <span class="hljs-attr">entry</span>: &#123;<br>    <span class="hljs-attr">main</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>    <span class="hljs-attr">other</span>: <span class="hljs-string">&#x27;./src/other.js&#x27;</span>,<br>  &#125;,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">path</span>: path.<span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>),<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;js/[name].[contenthash:6].js&#x27;</span>,<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./src/index.html&#x27;</span>,<br>      <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;index.html&#x27;</span>,<br>      <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;index&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;vendor&#x27;</span>, <span class="hljs-string">&#x27;main&#x27;</span>], <span class="hljs-comment">// 指定只需要引入的chunks</span><br>    &#125;),<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./src/index.html&#x27;</span>,<br>      <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;other.html&#x27;</span>,<br>      <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;other&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;vendor&#x27;</span>, <span class="hljs-string">&#x27;other&#x27;</span>], <span class="hljs-comment">// 指定只需要引入的chunks</span><br>    &#125;),<br>  ],<br>  <span class="hljs-attr">optimization</span>: &#123;<br>    <span class="hljs-attr">splitChunks</span>: &#123;<br>      <span class="hljs-attr">cacheGroups</span>: &#123;<br>        <span class="hljs-attr">vendor</span>: &#123;<br>          <span class="hljs-attr">test</span>: <span class="hljs-regexp">/[\\/]node_modules[\\/]/</span>,<br>          <span class="hljs-attr">chunks</span>: <span class="hljs-string">&#x27;all&#x27;</span>,<br>          <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;vendor&#x27;</span>,<br>          <span class="hljs-attr">priority</span>: <span class="hljs-number">10</span>, <span class="hljs-comment">// 优先级</span><br>          <span class="hljs-attr">enforce</span>: <span class="hljs-literal">true</span>,<br>          <span class="hljs-attr">minChunks</span>: <span class="hljs-number">1</span>,<br>          <span class="hljs-attr">maxSize</span>: <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">10</span>, <span class="hljs-comment">// 最大10m</span><br>        &#125;,<br>      &#125;,<br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们主要是实现了<code>set</code>和<code>get</code>数据存取的两个方法，而数据的删除是由数据存储空间大小限制在<code>set</code>过程中自动处理的，接下来我们测试一下我们<code>LRUCache</code>的两个方法</p>
+<ul>
+<li><p>set</p>
+<img src="https://pic.jitudisk.com/public/2022/07/06/e59f08f2cbf33.png" alt="1657090354104.png" title="set.png" /></li>
+</ul>
+<p>可以清楚看到，在存储空间占满之前，<code>set</code>按照先后顺序依次进行存储，当存储空间满了之后，会删除最旧的数据</p>
+<ul>
+<li>get</li>
+</ul>
+<img src="https://pic.jitudisk.com/public/2022/07/06/1741158383123.png" alt="1657090964106.png" title="get.png" />
 
-<p>多页面应用通过指定多入口文件会自动生成对应每个入口文件的 chunk，比如以上配置最终会生成 <code>main.[hash]</code> 、 <code>other.[hash]</code> 、 <code>vendor.[hash]</code>三个 chunk 文件，分别对应其入口文件以及它们所引入的 node_modules 中的依赖</p>
-<p>值得注意的是我们不要忘了给<code>html-webpack-plugin</code>添加<code>chunks</code>的配置，来让我们对应的 html 文件只引入其所需的 chunks，而不是引入所有 chunks</p>
+<p><code>get</code>会在获取指定数据的同时，更新该数据在存储空间的所在顺序至最前</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>就这样一个<code>javascript</code>版本的简易<code>LRU缓存</code>算法就被我们实现了，是不是觉得 just so so 😁</p>
+<p>当然<code>LRU缓存</code>的核心思路远不只是这么简易，有兴趣的同学可以再深入进行探究～</p>
 
       </section>
 
       
       
         <nav class="article-nav">
+          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
@@ -171,23 +188,6 @@
       
         <a href="/2022/07/04/sadness/" itemprop="url">
           <h2 class="card-text--title text-ellipsis">sadness</h2>
-        </a>
-      
-      <div class="card-text--row">Newer</div>
-    </div>
-  </article>
-</div>
-          
-          
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-      <div class="card-cover" background-image-lazy data-img="https://pic.jitudisk.com/public/2022/07/05/f45a1a46a5bff.jpeg"></div>
-    
-    <div class="card-text">
-      
-        <a href="/2022/06/24/webpack-%E5%9F%BA%E7%A1%80%E7%AF%87/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">webpack-基础篇</h2>
         </a>
       
       <div class="card-text--row">Older</div>
@@ -208,7 +208,7 @@
       <div id="valine_thread" class="valine-thread"></div>
     </div>
     <!-- id 将作为查询条件 -->
-    <div id="/2022/06/28/webpack-%E4%BC%98%E5%8C%96%E7%AF%87%20(code-split)/" class="leancloud_visitors" data-flag-title="webpack-优化篇 (code split)">
+    <div id="/2022/07/06/js%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%98%93LRU%E7%BC%93%E5%AD%98/" class="leancloud_visitors" data-flag-title="js实现简易LRU缓存">
       <em class="post-meta-item-text">阅读量 </em>
       <i class="leancloud-visitors-count">1000000</i>
     </div>
