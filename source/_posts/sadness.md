@@ -1,7 +1,7 @@
 ---
 title: sadness
 date: 2022-07-04 15:14:13
-tags: life
+categories: life
 cover: /images/cover4.jpeg
 dplayer: true
 ---
