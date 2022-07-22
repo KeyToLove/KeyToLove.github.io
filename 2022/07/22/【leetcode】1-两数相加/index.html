@@ -26,7 +26,7 @@
 
   
 
-  <title>webpack-优化篇 (code split) | KeyToLove Blog Space</title>
+  <title>【leetcode】两数相加 | KeyToLove Blog Space</title>
 
   
 
@@ -49,7 +49,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/cover3.jpeg)"></div>
+    <div class="post-image" style="background-image: url(/images/cover7.webp)"></div>
   
 
   <!-- navbar -->
@@ -100,20 +100,20 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">webpack-优化篇 (code split)</h1>
+          <h1 class="title-wrap">【leetcode】两数相加</h1>
           <h2 class="title-sub-wrap">
             <strong>KeyToLove</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2022-06-28T08:26:31.000Z" itemprop="datePublished">2022-06-28</time>
+            <time  class="article-date" datetime="2022-07-22T03:26:59.000Z" itemprop="datePublished">2022-07-22</time>
           </h2>
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">📒 前端工程化</a></li>
+    <li><a href="/categories/%E7%AE%97%E6%B3%95/">📒 算法</a></li>
   
 </ul>
           <ul class="wrap-list dark">
   
-    <li><a href="/tags/webpack/">🏷️ webpack</a></li>
+    <li><a href="/tags/leetcode/">🏷️ leetcode</a></li>
   
 </ul>
         </div>
@@ -137,24 +137,20 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h3 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h3><p>一般来讲，基于 webpack 的 spa 应用，如果没有额外配置，所有的 js 经过打包后都会整合到一个 chunk 中，这就可能会导致这个 chunk 的体积过大，用户通过浏览器访问我们应用时就需要花费更多的时间来下载资源</p>
-<h3 id="为什么"><a href="#为什么" class="headerlink" title="为什么"></a>为什么</h3><ol>
-<li><p>我们可以把较大的资源根据实际情况拆分成小的模块，利用 http 可以并行请求资源的特点，大幅节省下载资源的时间开销</p>
-</li>
-<li><p>合理的代码分割也可以帮我们剔除模块中重复引入的代码（eg：node_modules 中的依赖抽离出来单独打包成一个 chunk），节省项目体积</p>
-</li>
-<li><p>多页面应用通过分包可以只加载当前 html 页面的资源，节省流量，优化用户体验</p>
-</li>
-</ol>
-<h3 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h3><p>单页面应用</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...省略无关配置</span><br>  <span class="hljs-attr">optimization</span>: &#123;<br>    <span class="hljs-attr">splitChunks</span>: &#123;<br>      <span class="hljs-attr">cacheGroups</span>: &#123;<br>        <span class="hljs-attr">vendor</span>: &#123;<br>          <span class="hljs-attr">test</span>: <span class="hljs-regexp">/[\\/]node_modules[\\/]/</span>,<br>          <span class="hljs-attr">chunks</span>: <span class="hljs-string">&#x27;all&#x27;</span>,<br>          <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;vendor&#x27;</span>,<br>          <span class="hljs-attr">priority</span>: <span class="hljs-number">10</span>, <span class="hljs-comment">// 优先级</span><br>          <span class="hljs-attr">enforce</span>: <span class="hljs-literal">true</span>,<br>          <span class="hljs-attr">minChunks</span>: <span class="hljs-number">1</span>,<br>          <span class="hljs-attr">maxSize</span>: <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">10</span>, <span class="hljs-comment">// 最大10m</span><br>        &#125;,<br>      &#125;,<br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p style="font-size:16px">Leetcode 算法题是一个全新的文章系列，该系列将会抽选 <a target="_blank" rel="noopener" href="https://leetcode.cn/">Leetcode</a> 上题目记录解题思路以及总结等</p>
+<b style="font-size:14px;color:red">tips: 为节省文章篇幅，题目描述以及相关示例本系列文章中不再额外赘述，可以对照题目原链接查看</b>
 
-<p>经过这么配置，最终会生成两个 js 的 chunk，一个是对应入口文件生成的 chunk 文件，另一个则是将我们应用中引入的依赖分割出去生成一个 chunk</p>
-<p>多页面应用</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...省略无关配置</span><br>  <span class="hljs-attr">entry</span>: &#123;<br>    <span class="hljs-attr">main</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>    <span class="hljs-attr">other</span>: <span class="hljs-string">&#x27;./src/other.js&#x27;</span>,<br>  &#125;,<br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">path</span>: path.<span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>),<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;js/[name].[contenthash:6].js&#x27;</span>,<br>  &#125;,<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./src/index.html&#x27;</span>,<br>      <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;index.html&#x27;</span>,<br>      <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;index&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;vendor&#x27;</span>, <span class="hljs-string">&#x27;main&#x27;</span>], <span class="hljs-comment">// 指定只需要引入的chunks</span><br>    &#125;),<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./src/index.html&#x27;</span>,<br>      <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;other.html&#x27;</span>,<br>      <span class="hljs-attr">title</span>: <span class="hljs-string">&#x27;other&#x27;</span>,<br>      <span class="hljs-attr">chunks</span>: [<span class="hljs-string">&#x27;vendor&#x27;</span>, <span class="hljs-string">&#x27;other&#x27;</span>], <span class="hljs-comment">// 指定只需要引入的chunks</span><br>    &#125;),<br>  ],<br>  <span class="hljs-attr">optimization</span>: &#123;<br>    <span class="hljs-attr">splitChunks</span>: &#123;<br>      <span class="hljs-attr">cacheGroups</span>: &#123;<br>        <span class="hljs-attr">vendor</span>: &#123;<br>          <span class="hljs-attr">test</span>: <span class="hljs-regexp">/[\\/]node_modules[\\/]/</span>,<br>          <span class="hljs-attr">chunks</span>: <span class="hljs-string">&#x27;all&#x27;</span>,<br>          <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;vendor&#x27;</span>,<br>          <span class="hljs-attr">priority</span>: <span class="hljs-number">10</span>, <span class="hljs-comment">// 优先级</span><br>          <span class="hljs-attr">enforce</span>: <span class="hljs-literal">true</span>,<br>          <span class="hljs-attr">minChunks</span>: <span class="hljs-number">1</span>,<br>          <span class="hljs-attr">maxSize</span>: <span class="hljs-number">1024</span> * <span class="hljs-number">1024</span> * <span class="hljs-number">10</span>, <span class="hljs-comment">// 最大10m</span><br>        &#125;,<br>      &#125;,<br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>本篇为 Leetcode 第 2 题-两数相加，题目链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/add-two-numbers/">两数相加</a></p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>根据题目描述以及示例分析可知，我们最终需要得到一个链表，并且链表只需要将给到的<code>l1</code>、<code>l2</code>两个链表按节点进行求和运算即可，注意考虑进位情况</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * Definition for singly-linked list.</span><br><span class="hljs-comment"> * function ListNode(val, next) &#123;</span><br><span class="hljs-comment"> *     this.val = (val===undefined ? 0 : val)</span><br><span class="hljs-comment"> *     this.next = (next===undefined ? null : next)</span><br><span class="hljs-comment"> * &#125;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> &#123;<span class="hljs-type">ListNode</span>&#125; <span class="hljs-variable">l1</span></span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> &#123;<span class="hljs-type">ListNode</span>&#125; <span class="hljs-variable">l2</span></span><br><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> &#123;<span class="hljs-type">ListNode</span>&#125;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">var</span> addTwoNumbers = <span class="hljs-keyword">function</span> (<span class="hljs-params">l1, l2</span>) &#123;<br>  <span class="hljs-comment">// 是否进位标识</span><br>  <span class="hljs-keyword">let</span> carry = <span class="hljs-number">0</span>,<br>    <span class="hljs-comment">// 最终返回链表</span><br>    head = <span class="hljs-literal">null</span>,<br>    <span class="hljs-comment">// 记录链表当前节点所在位置</span><br>    curr = <span class="hljs-literal">null</span><br>  <span class="hljs-comment">// 循环给定的两条链表，直到两条都已经循环完成</span><br>  <span class="hljs-keyword">while</span> (l1 || l2) &#123;<br>    <span class="hljs-comment">// 链表l1当前节点值,为空则根据题意取0</span><br>    <span class="hljs-keyword">const</span> v1 = l1?.<span class="hljs-property">val</span> ?? <span class="hljs-number">0</span><br>    <span class="hljs-comment">// 链表l2当前节点值,为空则根据题意取0</span><br>    <span class="hljs-keyword">const</span> v2 = l2?.<span class="hljs-property">val</span> ?? <span class="hljs-number">0</span><br>    <span class="hljs-comment">// 计算生成链表对应节点的值,注意包含上次是否进位的状态</span><br>    <span class="hljs-keyword">const</span> sum = v1 + v2 + carry<br>    <span class="hljs-comment">// 初始化链表</span><br>    <span class="hljs-keyword">if</span> (!head) &#123;<br>      head = curr = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ListNode</span>(sum % <span class="hljs-number">10</span>)<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-comment">// 链表已初始化则更新链表节点</span><br>      curr.<span class="hljs-property">next</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ListNode</span>(sum % <span class="hljs-number">10</span>)<br>      <span class="hljs-comment">// 指针位置相应后移</span><br>      curr = curr.<span class="hljs-property">next</span><br>    &#125;<br>    <span class="hljs-comment">// 判断并缓存本次求和计算进位结果</span><br>    carry = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">floor</span>(sum / <span class="hljs-number">10</span>)<br>    <span class="hljs-comment">// 未循环完成则继续向后循环</span><br>    l1 &amp;&amp; (l1 = l1.<span class="hljs-property">next</span>)<br>    l2 &amp;&amp; (l2 = l2.<span class="hljs-property">next</span>)<br>  &#125;<br>  <span class="hljs-comment">// 判断最后是否还有进位，有则补充</span><br>  <span class="hljs-keyword">if</span> (carry) &#123;<br>    curr.<span class="hljs-property">next</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">ListNode</span>(carry)<br>  &#125;<br>  <span class="hljs-keyword">return</span> head<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>多页面应用通过指定多入口文件会自动生成对应每个入口文件的 chunk，比如以上配置最终会生成 <code>main.[hash]</code> 、 <code>other.[hash]</code> 、 <code>vendor.[hash]</code>三个 chunk 文件，分别对应其入口文件以及它们所引入的 node_modules 中的依赖</p>
-<p>值得注意的是我们不要忘了给<code>html-webpack-plugin</code>添加<code>chunks</code>的配置，来让我们对应的 html 文件只引入其所需的 chunks，而不是引入所有 chunks</p>
+<p>复杂度分析：</p>
+<ul>
+<li><p>时间复杂度：O(\max(m,n))O(max(m,n))，其中 mm 和 nn 分别为两个链表的长度。我们要遍历两个链表的全部位置，而处理每个位置只需要 O(1)O(1) 的时间。</p>
+</li>
+<li><p>空间复杂度：O(1)O(1)。注意返回值不计入空间复杂度。</p>
+</li>
+</ul>
 
       </section>
 
@@ -162,32 +158,16 @@
       
         <nav class="article-nav">
           
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-      <div class="card-cover" background-image-lazy data-img="/images/cover4.jpeg"></div>
-    
-    <div class="card-text">
-      
-        <a href="/2022/07/04/sadness/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">sadness</h2>
-        </a>
-      
-      <div class="card-text--row">Newer</div>
-    </div>
-  </article>
-</div>
-          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="/images/cover2.jpeg"></div>
+      <div class="card-cover" background-image-lazy data-img="/images/cover7.webp"></div>
     
     <div class="card-text">
       
-        <a href="/2022/06/24/webpack-%E5%9F%BA%E7%A1%80%E7%AF%87/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">webpack-基础篇</h2>
+        <a href="/2022/07/21/%E3%80%90leetcode%E3%80%911-%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">【leetcode】两数之和</h2>
         </a>
       
       <div class="card-text--row">Older</div>
@@ -208,7 +188,7 @@
       <div id="valine_thread" class="valine-thread"></div>
     </div>
     <!-- id 将作为查询条件 -->
-    <div id="/2022/06/28/webpack-%E4%BC%98%E5%8C%96%E7%AF%87%20(code-split)/" class="leancloud_visitors" data-flag-title="webpack-优化篇 (code split)">
+    <div id="/2022/07/22/%E3%80%90leetcode%E3%80%911-%E4%B8%A4%E6%95%B0%E7%9B%B8%E5%8A%A0/" class="leancloud_visitors" data-flag-title="【leetcode】两数相加">
       <em class="post-meta-item-text">阅读量 </em>
       <i class="leancloud-visitors-count">1000000</i>
     </div>
