@@ -1,5 +1,5 @@
 ---
-title: 【leetcode】两数之和
+title: 【leetcode】1.两数之和
 date: 2022-07-21 15:17:43
 tags: leetcode
 categories: 算法
