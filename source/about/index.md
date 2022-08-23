@@ -1,7 +1,7 @@
 ---
 title: 关于
 date: 2022-06-24 15:40:28
-subtitle: Dota2 统帅预备选手
+subtitle: Balance Life & Work
 aplayer: true
 dplayer: true
 ---
