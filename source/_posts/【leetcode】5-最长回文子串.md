@@ -3,7 +3,7 @@ title: 【leetcode】5.最长回文子串
 date: 2022-08-17 11:44:30
 tags: leetcode
 categories: 算法
-cover: /images/cover3.jpeg
+cover: /blogs/images/cover3.jpeg
 ---
 
 ## 前言

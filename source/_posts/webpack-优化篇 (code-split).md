@@ -3,7 +3,7 @@ title: webpack-优化篇 (code split)
 date: 2022-06-28 16:26:31
 tags: webpack
 categories: 前端工程化
-cover: /images/cover3.jpeg
+cover: /blogs/images/cover3.jpeg
 ---
 
 ### 背景

@@ -7,7 +7,7 @@ dplayer: true
 ---
 
 {%  aplayer
-    url="/music/demo.flac"
+    url="/blogs/music/⛲️.flac"
     name="⛲️"
     artist="老田"
 %}

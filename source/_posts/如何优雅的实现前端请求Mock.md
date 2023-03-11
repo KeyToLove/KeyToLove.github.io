@@ -1,7 +1,7 @@
 ---
 title: 如何优雅的实现前端请求Mock
 date: 2022-07-13 11:25:38
-cover: /images/cover6.jpeg
+cover: /blogs/images/cover6.jpeg
 ---
 
 ## 前言

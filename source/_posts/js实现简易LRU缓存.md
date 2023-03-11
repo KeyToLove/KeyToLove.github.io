@@ -3,7 +3,7 @@ title: js实现简易LRU缓存
 date: 2022-07-06 11:07:35
 tags: LRU
 categories: 算法
-cover: /images/cover5.jpeg
+cover: /blogs/images/cover5.jpeg
 ---
 
 ## 前言
@@ -83,13 +83,13 @@ class LRUCache {
 
 - set
 
-  <img src="/images/code1.png" alt="set.png" title="set.png" />
+  <img src="/blogs/images/code1.png" alt="set.png" title="set.png" />
 
 可以清楚看到，在存储空间占满之前，`set`按照先后顺序依次进行存储，当存储空间满了之后，会删除最旧的数据
 
 - get
 
-<img src="/images/code2.png" alt="get.png" title="get.png" />
+<img src="/blogs/images/code2.png" alt="get.png" title="get.png" />
 
 `get`会在获取指定数据的同时，更新该数据在存储空间的所在顺序至最前
 
