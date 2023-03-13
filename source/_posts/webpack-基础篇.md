@@ -3,7 +3,7 @@ title: webpack-基础篇
 date: 2022-06-24 14:35:31
 tags: webpack
 categories: 前端工程化
-cover: /blogs/images/cover2.jpeg
+cover: /images/cover2.jpeg
 ---
 
 <b style="font-size:18px;color:red">tips: 本文及后续 webpack 相关文章如未特殊声明，都是在基于 5.x 版本进行文章编写</b>

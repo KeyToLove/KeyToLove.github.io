@@ -3,7 +3,7 @@ title: 【leetcode】3.无重复字符的最大子串
 date: 2022-07-27 11:39:33
 tags: leetcode
 categories: 算法
-cover: /blogs/images/cover1.jpeg
+cover: /images/cover1.jpeg
 ---
 
 ## 前言

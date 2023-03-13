@@ -3,7 +3,7 @@ title: 【leetcode】2.两数相加
 date: 2022-07-22 11:26:59
 tags: leetcode
 categories: 算法
-cover: /blogs/images/cover8.jpeg
+cover: /images/cover8.jpeg
 ---
 
 ## 前言

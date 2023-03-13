@@ -3,7 +3,7 @@ title: 【leetcode】6.Z字形变换
 date: 2022-08-22 18:11:25
 tags: leetcode
 categories: 算法
-cover: /blogs/images/cover4.jpeg
+cover: /images/cover4.jpeg
 ---
 
 ## 前言
