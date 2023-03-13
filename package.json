@@ -24,6 +24,6 @@
     "hexo-theme-landscape": "^0.0.3"
   },
   "devDependencies": {
-    "hexo-deployer-git": "^3.0.0"
+    "hexo-deployer-git": "^4.0.0"
   }
 }
