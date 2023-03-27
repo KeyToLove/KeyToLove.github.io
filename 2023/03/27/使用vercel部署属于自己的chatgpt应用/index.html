@@ -26,7 +26,7 @@
 
   
 
-  <title>js实现简易LRU缓存 | KeyToLove Blog Space</title>
+  <title>使用vercel部署属于自己的chatgpt web应用 | KeyToLove Blog Space</title>
 
   
 
@@ -49,7 +49,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/cover5.jpeg)"></div>
+    <div class="post-image" style="background-image: url(/images/banner.jpeg)"></div>
   
 
   <!-- navbar -->
@@ -102,20 +102,16 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">js实现简易LRU缓存</h1>
+          <h1 class="title-wrap">使用vercel部署属于自己的chatgpt web应用</h1>
           <h2 class="title-sub-wrap">
             <strong>KeyToLove</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2022-07-06T03:07:35.000Z" itemprop="datePublished">2022-07-06</time>
+            <time  class="article-date" datetime="2023-03-27T10:18:22.000Z" itemprop="datePublished">2023-03-27</time>
           </h2>
           <ul class="wrap-list dark">
   
-    <li><a href="/categories/%E7%AE%97%E6%B3%95/">📒 算法</a></li>
-  
 </ul>
           <ul class="wrap-list dark">
-  
-    <li><a href="/tags/LRU/">🏷️ LRU</a></li>
   
 </ul>
         </div>
@@ -139,64 +135,12 @@
       
       
       <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
-        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>算法就是从<code>input</code>到<code>output</code>过程的一个实现，因此我们在学习或琢磨算法问题时应该先捋清思路，明确我们需要得到的是什么，试着列举从输入到输出我们需要处理的任务项，逐个实现。</p>
-<h2 id="什么是-LRU-缓存"><a href="#什么是-LRU-缓存" class="headerlink" title="什么是 LRU 缓存"></a>什么是 LRU 缓存</h2><p>首先我们看看百度百科对 LRU 的描述</p>
-<blockquote>
-<p>LRU 是 Least Recently Used 的缩写，即最近最少使用，是一种常用的页面置换算法，选择最近最久未使用的页面予以淘汰。该算法赋予每个页面一个访问字段，用来记录一个页面自上次被访问以来所经历的时间 t，当须淘汰一个页面时，选择现有页面中其 t 值最大的，即最近最少使用的页面予以淘汰。</p>
-</blockquote>
-<p>针对百度百科的描述，举个例子：我们在使用浏览器浏览窗口时候，我们一个接一个的访问新的页面，内存将我们这些页面进行了缓存以方便我们稍后回过头访问；但是随着时间的推移，不断新增的新页即将塞满浏览器有限的内存，这个时候为了保证浏览器仍能正常工作，我们不得不删除页面来减少内存的占用；删除哪些页面呢？可以按访问的先后顺序或者说一个标准，<code>LRU</code>缓存就是这么一个标准，把<strong>最近时间内，最久未访问</strong>的页面给干掉。</p>
-<h2 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h2><ol>
-<li>系统底层的内存管理</li>
-<li>页面的置换算法</li>
-<li>一般的缓存服务，memcache、redis 之类</li>
-<li>部分资源有限的业务场景</li>
-</ol>
-<h2 id="简易实现"><a href="#简易实现" class="headerlink" title="简易实现"></a>简易实现</h2><p>经过分析我们不难得出 <code>LRU</code> 有如下特点：</p>
-<ul>
-<li>资源有限，假使资源无限我们也就不需要利用 <code>LRU</code> 进行删除处理·</li>
-<li>存储空间需要是有序的,因为有序的数据结构才能让我们按顺序删除数据的以节省条件查询的时间,<code>javascript</code>中可采用<code>Arrary</code>、<code>Map</code>数据结构</li>
-<li>存储空间达到上限时再新增数据，自动删除记录中最久远的数据</li>
-<li>能从我们的存储的数据结构中获取和设置指定数据(get &amp; set)</li>
-</ul>
-<p>下面就用代码来实现这么一个满足特性的<code>LRUCache</code>类</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">class</span> <span class="hljs-title class_">LRUCache</span> &#123;<br>  <span class="hljs-title function_">constructor</span>(<span class="hljs-params">size</span>) &#123;<br>    <span class="hljs-comment">// 特性1: 资源有限 初始化存储空间大小</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">size</span> = size<br>    <span class="hljs-comment">// 特性2: 存储空间数据结构的有序性 初始化数据存储结构(Map 存取时间复杂度优，因此优先考虑)</span><br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">data</span> = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Map</span>()<br>  &#125;<br>  <span class="hljs-comment">// 获取指定数据</span><br>  <span class="hljs-title function_">get</span>(<span class="hljs-params">key</span>) &#123;<br>    <span class="hljs-keyword">const</span> &#123; data &#125; = <span class="hljs-variable language_">this</span><br>    <span class="hljs-comment">// 未找到提前 return</span><br>    <span class="hljs-keyword">if</span> (!data.<span class="hljs-title function_">has</span>(key)) &#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span><br>    &#125;<br>    <span class="hljs-keyword">const</span> value = data.<span class="hljs-title function_">get</span>(key)<br>    <span class="hljs-comment">// 通过先移除再重新插入的方式更新该数据在存储空间中的排序至最新</span><br>    data.<span class="hljs-title function_">delete</span>(key)<br>    data.<span class="hljs-title function_">set</span>(key, value)<br>    <span class="hljs-keyword">return</span> value<br>  &#125;<br>  <span class="hljs-comment">// 存储指定数据</span><br>  <span class="hljs-title function_">set</span>(<span class="hljs-params">key, value</span>) &#123;<br>    <span class="hljs-keyword">const</span> &#123; data, size &#125; = <span class="hljs-variable language_">this</span><br>    <span class="hljs-comment">// 已存在数据先移除默认记录后续更新排序</span><br>    <span class="hljs-keyword">if</span> (data.<span class="hljs-title function_">has</span>(key)) &#123;<br>      data.<span class="hljs-title function_">delete</span>(key)<br>    &#125;<br>    <span class="hljs-comment">// 已达到存储上限，自动删除最久远历史数据</span><br>    <span class="hljs-keyword">if</span> (data.<span class="hljs-property">size</span> === size) &#123;<br>      <span class="hljs-keyword">const</span> _key = data.<span class="hljs-title function_">keys</span>().<span class="hljs-title function_">next</span>().<span class="hljs-property">value</span><br>      data.<span class="hljs-title function_">delete</span>(_key)<br>    &#125;<br>    <span class="hljs-comment">// 设置/更新数据</span><br>    data.<span class="hljs-title function_">set</span>(key, value)<br>    <span class="hljs-comment">// 返回当前实例方便链式掉用</span><br>    <span class="hljs-comment">// const l = new LRUCache(3)</span><br>    <span class="hljs-comment">// l.set(&#x27;k1&#x27;,&#x27;v1&#x27;).set(&#x27;k2&#x27;,&#x27;v2&#x27;)</span><br>    <span class="hljs-keyword">return</span> <span class="hljs-variable language_">this</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-
-<p>我们主要是实现了<code>set</code>和<code>get</code>数据存取的两个方法，而数据的删除是由数据存储空间大小限制在<code>set</code>过程中自动处理的，接下来我们测试一下我们<code>LRUCache</code>的两个方法</p>
-<ul>
-<li><p>set</p>
-<img src="/images/code1.png" alt="set.png" title="set.png" /></li>
-</ul>
-<p>可以清楚看到，在存储空间占满之前，<code>set</code>按照先后顺序依次进行存储，当存储空间满了之后，会删除最旧的数据</p>
-<ul>
-<li>get</li>
-</ul>
-<img src="/images/code2.png" alt="get.png" title="get.png" />
-
-<p><code>get</code>会在获取指定数据的同时，更新该数据在存储空间的所在顺序至最前</p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>就这样一个<code>javascript</code>版本的简易<code>LRU缓存</code>算法就被我们实现了，是不是觉得 just so so 😁</p>
-<p>当然<code>LRU缓存</code>的核心思路远不只是这么简易，有兴趣的同学可以再深入进行探究～</p>
-
+        
       </section>
 
       
       
         <nav class="article-nav">
-          
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-      <div class="card-cover" background-image-lazy data-img="/images/cover6.jpeg"></div>
-    
-    <div class="card-text">
-      
-        <a href="/2022/07/13/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82Mock/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">如何优雅的实现前端请求Mock</h2>
-        </a>
-      
-      <div class="card-text--row">Newer</div>
-    </div>
-  </article>
-</div>
           
           
             <div class="article-nav-item layout-padding">
@@ -206,8 +150,8 @@
     
     <div class="card-text">
       
-        <a href="/2022/07/04/sadness/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">sadness</h2>
+        <a href="/2022/08/22/%E3%80%90leetcode%E3%80%916-Z%E5%AD%97%E5%BD%A2%E5%8F%98%E6%8D%A2/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">【leetcode】6.Z字形变换</h2>
         </a>
       
       <div class="card-text--row">Older</div>
@@ -228,7 +172,7 @@
       <div id="valine_thread" class="valine-thread"></div>
     </div>
     <!-- id 将作为查询条件 -->
-    <div id="/2022/07/06/js%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%98%93LRU%E7%BC%93%E5%AD%98/" class="leancloud_visitors" data-flag-title="js实现简易LRU缓存">
+    <div id="/2023/03/27/%E4%BD%BF%E7%94%A8vercel%E9%83%A8%E7%BD%B2%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84chatgpt%E5%BA%94%E7%94%A8/" class="leancloud_visitors" data-flag-title="使用vercel部署属于自己的chatgpt web应用">
       <em class="post-meta-item-text">阅读量 </em>
       <i class="leancloud-visitors-count">1000000</i>
     </div>
