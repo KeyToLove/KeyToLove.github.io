@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#3367D6"/>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/></pre></li>
+  
+  <meta name="generator" content="Hexo 6.3.0">
+
+  
+    <meta name="description" content="KeyToLove Blog Space,KeyToLove 博客空间，记录技术 &amp; 生活 &amp; more">
+  
+
+  
+    <meta name="keywords" content="KeyToLove blog github Frent-End">
+  
+
+  
+    <meta name="author" content="KeyToLove">
+  
+
+  
+
+  
+
+  <title>webpack-基础篇 | KeyToLove Blog Space</title>
+
+  
+
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@1.1.3/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/styles/monokai.css">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+  <div class="root-container">
+    
+<!-- header container -->
+<header class="header-container post">
+  
+    <div class="post-image" style="background-image: url(/images/cover2.jpeg)"></div>
+  
+
+  <!-- navbar -->
+<nav class="navbar">
+  <div class="navbar-content">
+    <!-- logo -->
+    <div class="navbar-logo">
+      <a href="/">
+        
+          KeyToLove Blog Space
+        
+      </a>
+    </div>
+    <!-- link -->
+    <div class="navbar-link">
+      <!-- search -->
+    <div id="doc-search"></div>
+      <div class="navbar-btn">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <ul class="navbar-list">
+        
+          <li class="navbar-list-item"><a href="/">首页</a></li>
+        
+          <li class="navbar-list-item"><a href="/links">友链</a></li>
+        
+          <li class="navbar-list-item"><a href="/about">关于</a></li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    <div class="header-content">
+      <div class="post-text layout-block">
+        <div class="layout-margin">
+          <h1 class="title-wrap">webpack-基础篇</h1>
+          <h2 class="title-sub-wrap">
+            <strong>KeyToLove</strong>
+            <span>发布于</span>
+            <time  class="article-date" datetime="2022-06-24T06:35:31.000Z" itemprop="datePublished">2022-06-24</time>
+          </h2>
+          <ul class="wrap-list dark">
+  
+    <li><a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">📒 前端工程化</a></li>
+  
+</ul>
+          <ul class="wrap-list dark">
+  
+    <li><a href="/tags/webpack/">🏷️ webpack</a></li>
+  
+</ul>
+        </div>
+      </div>
+    </div>
+  
+
+  
+  
+  
+</header>
+
+    <!-- 文章 -->
+
+<!-- 文章内容 -->
+<div class="body-container">
+  <article class="content-container layout-block post-container">
+    <div class="article-info">
+      
+      
+      
+      
+      <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
+        <p><b style="font-size:18px;color:red">tips: 本文及后续 webpack 相关文章如未特殊声明，都是在基于 5.x 版本进行文章编写</b></p>
+<h2 id="webpack-是什么"><a href="#webpack-是什么" class="headerlink" title="webpack 是什么?"></a>webpack 是什么?</h2><blockquote>
+<p>本质上，webpack 是一个用于现代 JavaScript 应用程序的静态模块打包工具。当 webpack 处理应用程序时，它会在内部构建一个 依赖图(dependency graph)，此依赖图对应映射到项目所需的每个模块，并生成一个或多个 bundle。</p>
+</blockquote>
+<p>现在开源社区中，与 webpack 功能相似的有 rollup、vite 等，在这我做一下简单的介绍</p>
+<blockquote>
+<p><code>Rollup </code>是一个 JavaScript 模块打包器，可以将小块代码编译成大块复杂的代码，例如 library 或应用程序<br><code>Rollup </code>偏向应用于 js 库，例如做 ES 转换，模块解析等，webpack 则更偏向于前端工程、UI 库等，如果应用场景中不止包含 js 代码，还涉及 html、css,涉及复杂的代码拆分合并的话，webpack 会更加出众<br><code>Vite</code> —— 一种新的、更快地 web 开发工具(opinionated)，Vite 的主要特点是依赖浏览器原生的 ES module 来开发，省略了打包这一过程，采用 rollup for producton.</p>
+</blockquote>
+<h2 id="webpack-的核心概念"><a href="#webpack-的核心概念" class="headerlink" title="webpack 的核心概念"></a>webpack 的核心概念</h2><ol>
+<li>entry:入口</li>
+<li>output:出口</li>
+<li>loader:模块转换器,loader 可以使你在 import 或 “load(加载)” 模块时预处理文件</li>
+<li>plugins:插件,插件目的在于解决 loader 无法实现的其他事</li>
+</ol>
+<h2 id="Begin"><a href="#Begin" class="headerlink" title="Begin"></a>Begin</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-built_in">mkdir</span> <span class="hljs-string">&#x27;webpack-study&#x27;</span><br><span class="hljs-built_in">cd</span> webpack-stydy<br>npm init -y or yarn init -y<br></code></pre></td></tr></table></figure>
+
+<p>配置 webpack 首先需要安装 webpack、webpack-cli</p>
+<p>由于前端技术迭代迅速,并且不同版本包之间的配置存在差异,版本号标注如下</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-attr">&quot;webpack&quot;</span><span class="hljs-punctuation">:</span><span class="hljs-string">&quot;^5.27.1&quot;</span><span class="hljs-punctuation">,</span><br><span class="hljs-attr">&quot;webpack-cli&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;^4.5.0&quot;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i webpack webpack-cli -D<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>从 v4.0.0 开始，webpack 可以不用再引入一个配置文件来打包项目，然而，它仍然有着 高度可配置性，可以很好满足你的需求。</p>
+</blockquote>
+<p>我们接下来采用自定义配置的方式，去探索一下 webpack 的魅力</p>
+<p>首先，项目根目录下新建 <code>src/index.js</code>文件作为我们接下来配置的入口文件，同样根目录下新建 <code>webpack.config.js</code> 文件来进行我们的 webpack 配置</p>
+<p>让我们随便写点什么～</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// src/index.js</span><br><span class="hljs-keyword">const</span> p = <span class="hljs-string">&#x27;mike&#x27;</span><br></code></pre></td></tr></table></figure>
+
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-keyword">const</span> path = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;path&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">//默认./src/index.js</span><br>  <span class="hljs-attr">entry</span>: <span class="hljs-string">&#x27;./src/index.js&#x27;</span>,<br>  <span class="hljs-comment">//默认打包到dist/main.js</span><br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-attr">path</span>: path.<span class="hljs-title function_">resolve</span>(__dirname, <span class="hljs-string">&#x27;dist&#x27;</span>),<br>    <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;bundle.[contenthash:6].js&#x27;</span>,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>使用 <code>npx webpack</code> 进行构建，根目录下成功生成<code>/dist/bundle.6f3551.js</code>文件，但是留意到有警告信息：<br><img src="https://img-blog.csdnimg.cn/19d32ec7e75e418899ccfaafc700d563.png#pic_center" alt="在这里插入图片描述"></p>
+<p>提示我们没有设置 mode，默认将采用<code>production</code>模式，为了方便调试，我们将 mode 设置为<code>development</code>模式，重新使用<code>npx webpack --mode=development</code>构建，警告清除</p>
+<p>为了方便启动,在<code>package.json</code>中添加脚本,每次重新构建运行<code>npm run build</code>即可</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;scripts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;build&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;webpack --mode=development&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>打开 dist 目录下构建好的文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">/******/</span> ;(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-comment">// webpackBootstrap</span><br>  <span class="hljs-keyword">var</span> __webpack_exports__ = &#123;&#125;<br>  <span class="hljs-comment">/*!**********************!*\</span><br><span class="hljs-comment">  !*** ./src/index.js ***!</span><br><span class="hljs-comment">  \**********************/</span><br>  <span class="hljs-keyword">const</span> p = <span class="hljs-string">&#x27;mike&#x27;</span><br>  <span class="hljs-comment">/******/</span><br>&#125;)()<br></code></pre></td></tr></table></figure>
+
+<h3 id="JS-向下兼容"><a href="#JS-向下兼容" class="headerlink" title="JS 向下兼容"></a>JS 向下兼容</h3><p>由于 js 代码最终运行在用户的浏览器上，少数低版本浏览器例如 ie 对 js 的的新语法存在兼容性问题，这时候我们就需要将这一部分不兼容的语法转义成浏览器能解析的低版本语法</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i babel-loader -D<br>npm i @babel/core @babel/preset-env core-js -D<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">export</span> = &#123;<br>  <span class="hljs-comment">//...</span><br>  <span class="hljs-attr">module</span>: &#123;<br>    <span class="hljs-attr">rules</span>: [<br>      &#123;<br>        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.jsx?$/</span>,<br>        <span class="hljs-attr">loader</span>: <span class="hljs-string">&#x27;babel-loader&#x27;</span>,<br>        <span class="hljs-attr">exclude</span>: <span class="hljs-regexp">/node_modules/</span>,<br>      &#125;,<br>    ],<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>添加上 babel-loader 之后，还需要对 babel 进行配置,根目录下新建.babelrc 文件</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// babelrc</span><br><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;presets&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">[</span><br>    <span class="hljs-punctuation">[</span><br>      <span class="hljs-string">&quot;@babel/preset-env&quot;</span><span class="hljs-punctuation">,</span><br>      <span class="hljs-punctuation">&#123;</span><br>        <span class="hljs-attr">&quot;targets&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>          <span class="hljs-attr">&quot;chrome&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;58&quot;</span><span class="hljs-punctuation">,</span><br>          <span class="hljs-attr">&quot;ie&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;11&quot;</span><br>        <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;corejs&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;3&quot;</span><span class="hljs-punctuation">,</span><br>        <span class="hljs-attr">&quot;useBuiltIns&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;usage&quot;</span><br>      <span class="hljs-punctuation">&#125;</span><br>    <span class="hljs-punctuation">]</span><br>  <span class="hljs-punctuation">]</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>再次运行<code>npm run build</code>构建</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">/******/</span> ;(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-comment">// webpackBootstrap</span><br>  <span class="hljs-keyword">var</span> __webpack_exports__ = &#123;&#125;<br>  <span class="hljs-comment">/*!**********************!*\</span><br><span class="hljs-comment">  !*** ./src/index.js ***!</span><br><span class="hljs-comment">  \**********************/</span><br>  <span class="hljs-keyword">var</span> p = <span class="hljs-string">&#x27;mike&#x27;</span><br>  <span class="hljs-comment">/******/</span><br>&#125;)()<br></code></pre></td></tr></table></figure>
+
+<p>可以看到声明变量从<code>const</code>已经转义成<code>var</code></p>
+<p>捣鼓了这么久，可能有些小伙伴就该问了：怎么还不能在浏览器上查看页面呢？那么我们接着往下走</p>
+<p>首先安装依赖包</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install html-webpack-plugin -D<br></code></pre></td></tr></table></figure>
+
+<p>项目根目录新建<code>public</code>文件夹，在该目录下新建 index.html 文件，文件内容为标准 html5 模板即可</p>
+<p><code>webpack.config.js</code>添加如下配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-title class_">HtmlWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;html-webpack-plugin&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...</span><br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">HtmlWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">template</span>: <span class="hljs-string">&#x27;./public/index.html&#x27;</span>,<br>      <span class="hljs-attr">filename</span>: <span class="hljs-string">&#x27;index.html&#x27;</span>, <span class="hljs-comment">//打包后的文件名</span><br>      <span class="hljs-attr">hash</span>: <span class="hljs-literal">true</span>,<br>    &#125;),<br>  ],<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>再次运行<code>npm run build</code>构建,可以看到 dist 目录下多了依照<code>public/index.html</code>生成的<code>index.html</code>文件，并且自动引入了构建的 js 文件,这时候我们已经可以通过<code>live server</code>将我们的代码运行在浏览器上了，但是每次修改后都要重新构建才能预览变更显然是不合理的，我们需要的是在浏览器中能实时展示效果</p>
+<h3 id="实时预览"><a href="#实时预览" class="headerlink" title="实时预览"></a>实时预览</h3><p>遇事不决，先装依赖</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install webpack-dev-server -D<br></code></pre></td></tr></table></figure>
+
+<p>在<code>package.json</code>添加脚本</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-punctuation">&#123;</span><br>  <span class="hljs-attr">&quot;scripts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;dev&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;webpack serve&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;build&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;webpack --mode=development&quot;</span><br>  <span class="hljs-punctuation">&#125;</span><br><span class="hljs-punctuation">&#125;</span><br></code></pre></td></tr></table></figure>
+
+<p>运行启动脚本 <code>npm run dev</code>，可以在终端看到程序已经运行到<code>http://localhost:3000/</code>，打开浏览器访问该连接即可预览我们程序</p>
+<p>修改一下我们的代码，例如在 <code>src/index.js</code> 中添加<code>console.log(&#39;Hello World&#39;)</code> 保存后回到浏览器打开控制台，可以发现已经成功打印,我们还可以在 <code>webpack.config.js</code> 中进行自定义的 <code>webpack-dev-server</code> 相关配置，更多配置 <a target="_blank" rel="noopener" href="https://webpack.js.org/">webpack-dev-server</a></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">//...</span><br>  <span class="hljs-attr">devServer</span>: &#123;<br>    <span class="hljs-attr">port</span>: <span class="hljs-string">&#x27;9000&#x27;</span>, <span class="hljs-comment">//修改端口为 9000</span><br>    <span class="hljs-attr">compress</span>: <span class="hljs-literal">true</span>, <span class="hljs-comment">//是否启用 gzip 压缩</span><br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>重新<code>npm run dev</code>程序启动在<code>http://localhost:9000/</code>，抱着严谨的态度复制该链接在 IE 浏览器访问，打开控制台，好家伙居然报错了，我们开始不是通过<code>babel</code>把高版本 js 向下兼容了吗,根据报错信息以及<code>dist</code>文件夹下打包的代码定位到原因：<code>babel</code>的确帮我们进行了转义，但是 webpack 5 在构建的时候默认是箭头函数来包裹代码，而箭头函数在低版本浏览器中是不兼容的</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">//...</span><br>  <span class="hljs-attr">output</span>: &#123;<br>    <span class="hljs-comment">// 配置webpack不使用箭头函数</span><br>    <span class="hljs-attr">environment</span>: &#123;<br>      <span class="hljs-attr">arrowFunction</span>: <span class="hljs-literal">false</span>,<br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>修改配置文件后，需要重新启动程序<code>npm run dev</code>,ie 浏览器下刷新报错清除，正常打印,运行<code>npm run build</code>发现<code>dist</code>目录下构建的 js 代码中箭头函数被替换成普通函数</p>
+<h3 id="devtool"><a href="#devtool" class="headerlink" title="devtool"></a>devtool</h3><p>我们将<code>src/index.js</code>中<code>console.log(&#39;Hello World&#39;)</code>这一行前回车多添加几个空行,打开浏览器控制台查看<br><img src="https://img-blog.csdnimg.cn/cbf8d7fa623c4b82980b2baff6bb448e.png#pic_center" alt="在这里插入图片描述"></p>
+<p>如图告诉我这一行打印来自与 bundle.xxx 文件第二行，而实际情况是我的这行代码写在<code>src/index.js</code>的第五行，这样就很影响我们开发过程中定位问题，<code>devtool</code>可以帮助我们映射源码位置，帮助我们 debugger</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">//...</span><br>  <span class="hljs-attr">devtool</span>: <span class="hljs-string">&#x27;source-map&#x27;</span>,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>修改配置文件，重启程序<code>npm run dev</code>，正确映射源码地址<br><img src="https://img-blog.csdnimg.cn/d25ba09807a24ebd9d3a2a95a120ed08.png#pic_center" alt="在这里插入图片描述"></p>
+<p>*<code>devtool</code>的不同设置会直接影响到构建速度，以及打包后文件的大小，因此要根据实际情况配置，具体参考<a target="_blank" rel="noopener" href="https://webpack.js.org/configuration/devtool/">devtool</a></p>
+<h3 id="style"><a href="#style" class="headerlink" title="style"></a>style</h3><p>新建<code>src/index.less</code>文件，并且在<code>src/index.js</code>中引入</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-comment">//  index.less</span><br><span class="hljs-selector-tag">body</span> &#123;<br>  <span class="hljs-attribute">height</span>: <span class="hljs-number">100vh</span>;<br>  <span class="hljs-attribute">background</span>: chocolate;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://img-blog.csdnimg.cn/dbbcb275b2734ab09eec2149846eb5b6.png#pic_center" alt="在这里插入图片描述"></p>
+<p>终端报错，提示我们需要<code>loader</code>来处理<code>.less</code>类型的文件。对于<code>css</code>、<code>less</code>、<code>sass</code>等样式文件 webpack 并不能直接处理，需要借助相应的 loader，接下来以<code>less</code>为例，来使得 webpack 可以处理样式文件，首先先安装依赖</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i style-loader css-loader less-loader less -D<br></code></pre></td></tr></table></figure>
+
+<p>修改<code>webpack.config.js</code>配置文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...</span><br>  <span class="hljs-attr">module</span>: &#123;<br>    <span class="hljs-attr">rules</span>: [<br>      <span class="hljs-comment">// ...</span><br>      &#123;<br>        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.(c|le)ss$/</span>,<br>        <span class="hljs-attr">use</span>: [<span class="hljs-string">&#x27;style-loader&#x27;</span>, <span class="hljs-string">&#x27;css-loader&#x27;</span>, <span class="hljs-string">&#x27;less-loader&#x27;</span>],<br>        <span class="hljs-attr">exclude</span>: <span class="hljs-regexp">/node_modules/</span>,<br>      &#125;,<br>    ],<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>npm run dev</code> 重启程序，报错清楚，浏览器能正确显示设置的背景色</p>
+<h3 id="图片以及字体文件处理"><a href="#图片以及字体文件处理" class="headerlink" title="图片以及字体文件处理"></a>图片以及字体文件处理</h3><p>修改<code>src/index.less</code></p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs less"><span class="hljs-comment">// index.less</span><br><span class="hljs-selector-tag">body</span> &#123;<br>  <span class="hljs-attribute">height</span>: <span class="hljs-number">100vh</span>;<br>  <span class="hljs-attribute">background</span>: url(<span class="hljs-string">&#x27;../img/tx.jpeg&#x27;</span>);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>当我们设置背景为一张本地图片时，发现终端报类似上面处理<code>less</code>文件的错误，也就是说我们需要配置对应<code>loader</code>来处理</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install url-loader -D<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...</span><br>  <span class="hljs-attr">module</span>: &#123;<br>    <span class="hljs-attr">rules</span>: [<br>      <span class="hljs-comment">// ...</span><br>      &#123;<br>        <span class="hljs-attr">test</span>: <span class="hljs-regexp">/\.(png|jpg|gif|jpeg|webp|svg|eot|ttf|woff|woff2)$/</span>,<br>        <span class="hljs-attr">use</span>: [<br>          &#123;<br>            <span class="hljs-attr">loader</span>: <span class="hljs-string">&#x27;url-loader&#x27;</span>,<br>            <span class="hljs-attr">options</span>: &#123;<br>              <span class="hljs-attr">limit</span>: <span class="hljs-number">10240</span>, <span class="hljs-comment">//10K 小于10k的图片会转换称base64 能减少http请求</span><br>              <span class="hljs-attr">esModule</span>: <span class="hljs-literal">false</span>,<br>              <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;[name]_[contenthash:6].[ext]&#x27;</span>, <span class="hljs-comment">// 命名  默认是文件名转MD5的哈希值</span><br>              <span class="hljs-attr">outputPath</span>: <span class="hljs-string">&#x27;assets/images&#x27;</span>, <span class="hljs-comment">//本地资源较多时 指定统一的打包地址</span><br>            &#125;,<br>          &#125;,<br>        ],<br>        <span class="hljs-attr">exclude</span>: <span class="hljs-regexp">/node_modules/</span>,<br>      &#125;,<br>    ],<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="打包前清空-dist-目录"><a href="#打包前清空-dist-目录" class="headerlink" title="打包前清空 dist 目录"></a>打包前清空 dist 目录</h3><p>由于每次打包都会生成<code>dist</code>文件夹，文件名上又存在 hash 的原因，所以每次打包，之前的<code>dist</code>目录下的文件就会成为没有意义的垃圾文件，我们可以打包前手动清除它，当然我们可以使用<code>webpack</code>的插件来帮我们偷懒</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i clean-webpack-plugin -D<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-keyword">const</span> &#123; <span class="hljs-title class_">CleanWebpackPlugin</span> &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;clean-webpack-plugin&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...</span><br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-comment">// ...</span><br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">CleanWebpackPlugin</span>(),<br>  ],<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>可以配置<code>cleanOnceBeforeBuildPatterns</code>,来排除那些不想清除的文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-keyword">const</span> &#123; <span class="hljs-title class_">CleanWebpackPlugin</span> &#125; = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;clean-webpack-plugin&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...</span><br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-comment">// ...</span><br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">CleanWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">cleanOnceBeforeBuildPatterns</span>: [<span class="hljs-string">&#x27;**/*&#x27;</span>, <span class="hljs-string">&#x27;!base&#x27;</span>, <span class="hljs-string">&#x27;!base/**&#x27;</span>],<br>    &#125;),<br>  ],<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="静态资源拷贝"><a href="#静态资源拷贝" class="headerlink" title="静态资源拷贝"></a>静态资源拷贝</h3><p>有时候我们有一些本地资源不希望经过 webpack 打包处理，比如一些外部 sdk,接下来我们来模拟一下，在<code>public</code>目录下新建<code>js/cdn.js</code>文件，然后在<code>public/index.html</code>中将其引入</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// public/cdn.js</span><br><span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;cdn init&#x27;</span>)<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-comment">&lt;!-- index.html --&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;./js/cdn.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p>打开浏览器控制台，发现我们引入的<code>cdn.js</code>报 404 了，因为我们并没有在入口文件<code>src/index.js</code>中引入<code>cdn.js</code>，所以 webpack 并没有将其打包，我们可以通过插件来帮我们自动拷贝文件来解决这个问题</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm i copy-webpack-plugin -D<br></code></pre></td></tr></table></figure>
+
+<p>修改配置文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack.config.js</span><br><span class="hljs-keyword">const</span> <span class="hljs-title class_">CopyWebpackPlugin</span> = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;copy-webpack-plugin&#x27;</span>)<br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// ...</span><br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-comment">// ...</span><br>    <span class="hljs-keyword">new</span> <span class="hljs-title class_">CopyWebpackPlugin</span>(&#123;<br>      <span class="hljs-attr">patterns</span>: [<br>        &#123;<br>          <span class="hljs-attr">from</span>: <span class="hljs-string">&#x27;public/js/*.js&#x27;</span>,<br>          <span class="hljs-attr">to</span>: <span class="hljs-string">&#x27;js/[name][ext]&#x27;</span>,<br>        &#125;,<br>      ],<br>    &#125;),<br>  ],<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>npm run dev</code>重启程序，发现浏览器控制台 404 错误清除，正确打印<code>cdn init</code></p>
+<p>配置到这一步，webpack 的基础配置就差不多完成了，不过 webpack 的强大远不止此，可以根据实际的需求完善&amp;优化 webpack 的配置～</p>
+
+      </section>
+
+      
+      
+        <nav class="article-nav">
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover3.jpeg"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2022/06/28/webpack-%E4%BC%98%E5%8C%96%E7%AF%87%20(code-split)/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">webpack-优化篇 (code split)</h2>
+        </a>
+      
+      <div class="card-text--row">Newer</div>
+    </div>
+  </article>
+</div>
+          
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover1.jpeg"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2022/06/23/hello-world/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">Hello World</h2>
+        </a>
+      
+      <div class="card-text--row">Older</div>
+    </div>
+  </article>
+</div>
+          
+        </nav>
+      
+
+      <section class="page-message-container layout-padding">
+        
+
+
+  
+  
+    <div class="valine-container comments-container content-padding--primary soft-size--large soft-style--box">
+      <div id="valine_thread" class="valine-thread"></div>
+    </div>
+    <!-- id 将作为查询条件 -->
+    <div id="/2022/06/24/webpack-%E5%9F%BA%E7%A1%80%E7%AF%87/" class="leancloud_visitors" data-flag-title="webpack-基础篇">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count">1000000</i>
+    </div>
+    <script type="text/javascript" src="https://unpkg.com/leancloud-storage@3.15.0/dist/av-min.js"></script>
+    <script type="text/javascript" src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <script type="text/javascript">
+      new Valine({
+        el: "#valine_thread",
+        appId: "epr01NN7HOiKlcWCvdv8swkK-gzGzoHsz",
+        appKey: "tljBAMawJJHIlAT6oYAnGBz6",
+        avatar: "mm",
+        placeholder: "随便说点什么叭～",
+        notify: true,
+        visitor: true,
+        pageSize: 10,
+        enableQQ: true,
+      });
+    </script>
+  
+
+  
+  
+
+
+      </section>
+    </div>
+    <div class="widget-info">
+      <section class="widget-author widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-body">
+    
+      <img src="https://s.gravatar.com/avatar/e2d21bed4d6ff8daa412b6d5576c4061?s=80" class="soft-size--round soft-style--box" alt="KeyToLove">
+    
+    
+      <h2>KeyToLove</h2>
+    
+    
+      <p>Think twice code once</p>
+    
+
+    <div class="count-box">
+      <div class="count-box--item">
+        <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
+</svg>
+        <span>12</span>
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+        4
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+        4
+      </div>
+    </div>
+  </div>
+</section>
+
+      
+
+      
+<section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-notice" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M512 945.02305225v28.15620663a24.27259221 24.27259221 0 0 1-24.27259221 24.27259335H394.0352a48.54518557 48.54518557 0 0 1-41.74885888-23.78714112l-110.68302222-184.47170332a132.04290333 132.04290333 0 0 1-17.47626667-48.54518557h118.4502511a200.97706667 200.97706667 0 0 1 76.21594113 14.56355556l20.38897777 133.49925888a48.54518557 48.54518557 0 0 0 36.40888888 27.67075555l16.01991111 2.91271112a24.27259221 24.27259221 0 0 1 20.38897778 25.72894889zM997.45185223 463.45481443a194.18074112 194.18074112 0 0 1-38.8361489 116.50844445 24.75804445 24.75804445 0 0 1-36.4088889 0l-34.95253333-34.95253333a24.27259221 24.27259221 0 0 1-2.91271111-30.58346667 97.09036999 97.09036999 0 0 0 0-106.79940665 24.27259221 24.27259221 0 0 1 2.91271111-30.58346666l34.95253333-34.95253334a24.75804445 24.75804445 0 0 1 18.93262223-7.28177777 26.2144 26.2144 0 0 1 17.47626667 9.70903665A194.18074112 194.18074112 0 0 1 997.45185223 463.45481443z m-194.18074112-388.36148111v776.72296335a48.54518557 48.54518557 0 0 1-48.54518556 48.54518443h-28.64165888a48.54518557 48.54518557 0 0 1-33.98163001-14.07810332l-145.63555556-143.20829668A291.27111111 291.27111111 0 0 0 342.57730333 657.63555556H172.18370333a145.63555556 145.63555556 0 0 1-145.63555556-145.63555556v-97.09036999a145.63555556 145.63555556 0 0 1 145.63555556-145.63555556h170.3936a291.27111111 291.27111111 0 0 0 206.31703779-85.43952668l145.63555555-143.20829554a48.54518557 48.54518557 0 0 1 33.98162888-14.07810446H754.72592555a48.54518557 48.54518557 0 0 1 48.54518556 48.54518555z" fill="currentColor"></path>
+</svg>
+    <span>NOTICE</span>
+  </div>
+  <div class="widget-body">
+    <p>Hi there 👋 Welcome to my blog space,hope you hava a good day~</p>
+  </div>
+</section>
+
+
+      <section class="widget-categorys widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+    <span>CATEGORYS</span>
+  </div>
+  <div class="widget-body">
+    <ul class="categorys-list">
+      
+        <li class="categorys-list-item">
+          <a href="/categories/test/">
+            test (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/life/">
+            life (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/%E7%AE%97%E6%B3%95/">
+            算法 (7)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
+            前端工程化 (2)
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+</section>
+
+      <section class="widget-tags widget-item  layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+    <span>TAGS</span>
+  </div>
+  <div class="widget-body">
+    <div class="tags-cloud">
+      <a href="/tags/LRU/" style="font-size: 10px;" class="tags-cloud-0">LRU</a> <a href="/tags/hexo/" style="font-size: 10px;" class="tags-cloud-0">hexo</a> <a href="/tags/leetcode/" style="font-size: 20px;" class="tags-cloud-10">leetcode</a> <a href="/tags/webpack/" style="font-size: 15px;" class="tags-cloud-5">webpack</a>
+    </div>
+  </div>
+</section>
+    </div>
+  </article>
+</div>
+
+    <!-- footer container -->
+<footer id="footer" class="footer">
+  <div class="footer-container">
+    
+    <div class="social-icons">
+      
+        
+      
+        
+      
+        
+      
+        
+          <a href="https://github.com/KeyToLove" class="soft-size--primary soft-style--box" target="_blank" rel="noopener noreferrer">
+            <svg class="icon icon-github" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M64.6 512c0 195.6 125.4 361.9 300.1 422.9 23.5 5.9 19.9-10.8 19.9-22.2v-77.6c-135.8 15.9-141.3-74-150.5-89-18.5-31.5-61.9-39.5-49-54.5 31-15.9 62.5 4 98.9 58 26.4 39.1 77.9 32.5 104.1 26 5.7-23.5 17.9-44.5 34.7-60.9-140.7-25.2-199.4-111.1-199.4-213.3 0-49.5 16.4-95.1 48.4-131.8-20.4-60.6 1.9-112.4 4.9-120.1 58.2-5.2 118.5 41.6 123.3 45.3 33.1-8.9 70.8-13.7 112.9-13.7 42.4 0 80.3 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.4-43.9 2.9 7.7 24.7 58.3 5.5 118.1 32.5 36.8 49 82.8 49 132.4 0 102.3-59 188.3-200.2 213.2 23.5 23.3 38.1 55.5 38.1 91.1v112.7c0.8 9 0 17.9 15.1 17.9C832.7 877 960.4 709.4 960.4 512.1c0-247.5-200.6-447.9-447.9-447.9C265 64.1 64.6 264.5 64.6 512z"></path>
+</svg>
+          </a>
+        
+      
+        
+      
+    </div>
+     
+    <p>&copy; 2023 <a href="https://github.com/KeyToLove/KeyToLove.github.io" target="_blank">KeyToLove</a></p>
+
+    
+
+    <p>Powered by <a href="https://hexo.io" target="_blank" rel="noopener noreferrer">Hexo</a> Theme - <a href="https://github.com/miiiku/flex-block" target="_blank" rel="noopener noreferrer author">flex-block</a></p>
+
+    <p>
+      <a href="javascript:;" id="theme-light">🌞 浅色</a>
+      <a href="javascript:;" id="theme-dark">🌛 深色</a>
+      <a href="javascript:;" id="theme-auto">🤖️ 自动</a>
+    </p>
+  </div>
+</footer>
+  </div>
+
+  <div class="back-to-top-fixed soft-size--round soft-style--box">
+    <svg class="icon icon-back-to-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <path d="M725.333333 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8l-213.333333-213.333333c-17.066667-17.066667-17.066667-42.666667 0-59.733333s42.666667-17.066667 59.733333 0l213.333333 213.333333c17.066667 17.066667 17.066667 42.666667 0 59.733333C746.666667 422.4 738.133333 426.666667 725.333333 426.666667z"></path>
+      <path d="M298.666667 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8-17.066667-17.066667-17.066667-42.666667 0-59.733333l213.333333-213.333333c17.066667-17.066667 42.666667-17.066667 59.733333 0s17.066667 42.666667 0 59.733333l-213.333333 213.333333C320 422.4 311.466667 426.666667 298.666667 426.666667z"></path>
+      <path d="M512 896c-25.6 0-42.666667-17.066667-42.666667-42.666667L469.333333 170.666667c0-25.6 17.066667-42.666667 42.666667-42.666667s42.666667 17.066667 42.666667 42.666667l0 682.666667C554.666667 878.933333 537.6 896 512 896z"></path>
+    </svg>
+  </div>
+
+  
+  <!-- aplayer -->
+
+
+<!-- dplayer -->
+
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+  <!-- 尾部用户自定义相关内容 -->
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+  docsearch({
+
+    appId: 'WEPZYOD6FH',
+
+    apiKey: 'db767917d4cc9abba669fc4196fd3262',
+
+    indexName: 'keytolove',
+
+    container: '#doc-search',
+
+    placeholder:'试试搜索点什么～',
+
+    debug: false // Set debug to true if you want to inspect the modal
+
+  });
+
+</script>
+</body>
+</html>

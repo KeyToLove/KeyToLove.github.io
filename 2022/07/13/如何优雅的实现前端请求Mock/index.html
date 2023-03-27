@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#3367D6"/>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/></pre></li>
+  
+  <meta name="generator" content="Hexo 6.3.0">
+
+  
+    <meta name="description" content="KeyToLove Blog Space,KeyToLove 博客空间，记录技术 &amp; 生活 &amp; more">
+  
+
+  
+    <meta name="keywords" content="KeyToLove blog github Frent-End">
+  
+
+  
+    <meta name="author" content="KeyToLove">
+  
+
+  
+
+  
+
+  <title>如何优雅的实现前端请求Mock | KeyToLove Blog Space</title>
+
+  
+
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@1.1.3/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/styles/monokai.css">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+  <div class="root-container">
+    
+<!-- header container -->
+<header class="header-container post">
+  
+    <div class="post-image" style="background-image: url(/images/cover6.jpeg)"></div>
+  
+
+  <!-- navbar -->
+<nav class="navbar">
+  <div class="navbar-content">
+    <!-- logo -->
+    <div class="navbar-logo">
+      <a href="/">
+        
+          KeyToLove Blog Space
+        
+      </a>
+    </div>
+    <!-- link -->
+    <div class="navbar-link">
+      <!-- search -->
+    <div id="doc-search"></div>
+      <div class="navbar-btn">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <ul class="navbar-list">
+        
+          <li class="navbar-list-item"><a href="/">首页</a></li>
+        
+          <li class="navbar-list-item"><a href="/links">友链</a></li>
+        
+          <li class="navbar-list-item"><a href="/about">关于</a></li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    <div class="header-content">
+      <div class="post-text layout-block">
+        <div class="layout-margin">
+          <h1 class="title-wrap">如何优雅的实现前端请求Mock</h1>
+          <h2 class="title-sub-wrap">
+            <strong>KeyToLove</strong>
+            <span>发布于</span>
+            <time  class="article-date" datetime="2022-07-13T03:25:38.000Z" itemprop="datePublished">2022-07-13</time>
+          </h2>
+          <ul class="wrap-list dark">
+  
+</ul>
+          <ul class="wrap-list dark">
+  
+</ul>
+        </div>
+      </div>
+    </div>
+  
+
+  
+  
+  
+</header>
+
+    <!-- 文章 -->
+
+<!-- 文章内容 -->
+<div class="body-container">
+  <article class="content-container layout-block post-container">
+    <div class="article-info">
+      
+      
+      
+      
+      <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>本文将详细介绍两种不借助第三方 Mock 工具的前端请求 Mock 方案</p>
+<h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在我们前端的日常工作中，难免需要请求后端的接口获取数据来进行页面的渲染，这个时候我们前端静态页面的开发以及相应的逻辑处理都与后端的接口息息相关，所以绝大多数时候在新需求的前期，我们前后端需要统一一份接口文档，以此来作为各自开发的指导和约束。</p>
+<p>接口定义好入参、返参之后我们就可以在前端自己 mock 数据进行相关的开发，比如有一个定义好的查询商品列表的接口,我们很自然的就能依据接口文档写出如下代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 定义api</span><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">getProducts</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> axios.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;/products&#x27;</span>)<br>&#125;<br><br><span class="hljs-comment">// 组件中使用</span><br><span class="hljs-title function_">getProducts</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">productList</span> = res.<span class="hljs-property">data</span><br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>但是在一开始，后端往往只是定义了一个接口格式，并没有实现其中的业务逻辑，或者是并没有部署，为了让页面有数据方便开发，我们可能会按照以下两种方式进行 mock</p>
+<ol>
+<li>修改定义 api 的部分</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> <span class="hljs-title function_">getProducts</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>([&#123; <span class="hljs-attr">id</span>: <span class="hljs-number">001</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;商品1&#x27;</span> &#125;])<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>修改调用部分</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-title function_">getProducts</span>()<br>  .<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> &#123;<br>    <span class="hljs-comment">// this.productList = res.data</span><br>  &#125;)<br>  .<span class="hljs-title function_">finally</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">this</span>.<span class="hljs-property">productList</span> = [&#123; <span class="hljs-attr">id</span>: <span class="hljs-number">001</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;商品1&#x27;</span> &#125;]<br>  &#125;)<br></code></pre></td></tr></table></figure>
+
+<p>可以看出无论哪种方式，我们都要修改接口相关处的代码，等到接口真正可用时我们又得删除这一部分无用的 mock 代码，如果有几十个接口，重复的工作量大不说，而且容易遗漏，接下来我们就一起来尝试如何优雅实现前端 mock</p>
+<h2 id="实践"><a href="#实践" class="headerlink" title="实践"></a>实践</h2><p>因为目前公司项目以 vue 为主，所以接下来的两个方案都是以<code>vue/cli 4.x</code>版本构建的项目进行介绍（react 同理，配置 webpack 即可）,http 请求使用的主流的<code>axios</code></p>
+<h3 id="方案一-利用-axios-的-adpter"><a href="#方案一-利用-axios-的-adpter" class="headerlink" title="方案一 利用 axios 的 adpter"></a>方案一 利用 axios 的 adpter</h3><p><code>axios</code>作为一款优秀的 http 库,能兼容在浏览器环境以及 node 环境发送 http 请求，核心就是其内置<code>adpter</code>模块会根据运行环境在浏览器端使用<code>XMLHttpRequest</code>，在 node 环境使用其内置<code>http</code>发起请求，并且支持配置自定义<code>adpter</code>,方案一就从这里入手</p>
+<p>从场景出发，我们在本地开发的时候是否需要使用 mock 显然是一个需要全局可控的操作，可以简单的进行开关，最合适的方式就是从脚本区分</p>
+<p>添加<code>dev:mock</code>脚本，区分<code>dev</code>,开启全局 mock</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// package.json</span><br><span class="hljs-attr">&quot;scripts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;dev&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;vue-cli-service serve&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;build&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;vue-cli-service build&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;dev:mock&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cross-env IS_MOCK=true vue-cli-service serve&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br></code></pre></td></tr></table></figure>
+
+<p><code>cross-env</code>帮我们处理兼容问题，向<code>process.env</code>中注入<code>IS_MOCK</code>变量</p>
+<p>修改 webpack 配置,省略其余不相关配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// vue.config.js</span><br><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">IS_MOCK</span> = process.<span class="hljs-property">env</span>.<span class="hljs-property">IS_MOCK</span> === <span class="hljs-string">&#x27;true&#x27;</span> <span class="hljs-comment">// 当运行dev:mock时为true</span><br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-comment">// 利用webpack definePlugin注入全局变量</span><br>  <span class="hljs-attr">chainWebpack</span>: <span class="hljs-function"><span class="hljs-params">config</span> =&gt;</span> &#123;<br>    config.<span class="hljs-title function_">plugin</span>(<span class="hljs-string">&#x27;define&#x27;</span>).<span class="hljs-title function_">tap</span>(<span class="hljs-function"><span class="hljs-params">args</span> =&gt;</span> &#123;<br>      args[<span class="hljs-number">0</span>].<span class="hljs-property">IS_MOCK</span> = <span class="hljs-variable constant_">IS_MOCK</span><br>      <span class="hljs-keyword">return</span> args<br>    &#125;)<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>添加 mock 配置文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-string">&#x27;/products&#x27;</span>: &#123;<br>    <span class="hljs-attr">code</span>: <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">data</span>: [&#123; <span class="hljs-attr">id</span>: <span class="hljs-number">001</span>, <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;商品1&#x27;</span> &#125;],<br>    <span class="hljs-attr">message</span>: <span class="hljs-string">&#x27;success&#x27;</span>,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>封装 axios 实例</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> axios <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;axios&#x27;</span><br><span class="hljs-comment">// 读取mock配置</span><br><span class="hljs-keyword">const</span> mockMap = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;xxxxxx/mock.js&#x27;</span>) <span class="hljs-comment">// mock配置文件路径</span><br><span class="hljs-keyword">var</span> instance = axios.<span class="hljs-title function_">create</span>(&#123;<br>  <span class="hljs-attr">adapter</span>: <span class="hljs-function"><span class="hljs-params">config</span> =&gt;</span> &#123;<br>    <span class="hljs-comment">// mock配置中匹配到当前url并且开启mock启用自定义adpter</span><br>    <span class="hljs-keyword">if</span> (mockMap[config.<span class="hljs-property">url</span>] &amp;&amp; <span class="hljs-variable constant_">IS_MOCK</span>) &#123;<br>      <span class="hljs-keyword">return</span> <span class="hljs-title class_">Promise</span>.<span class="hljs-title function_">resolve</span>(&#123;<br>        <span class="hljs-attr">data</span>: mockMap[config.<span class="hljs-property">url</span>],<br>        <span class="hljs-attr">status</span>: <span class="hljs-number">200</span>,<br>      &#125;)<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      <span class="hljs-comment">// 调用默认的适配器处理，需要删除自定义适配器，否则会死循环</span><br>      <span class="hljs-keyword">delete</span> config.<span class="hljs-property">adapter</span><br>      <span class="hljs-keyword">return</span> <span class="hljs-title function_">axios</span>(config)<br>    &#125;<br>  &#125;,<br>&#125;)<br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> instance<br></code></pre></td></tr></table></figure>
+
+<p>定义 api 采用配置后的 axios 实例</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// api.js</span><br><span class="hljs-keyword">import</span> instance <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;xxxx&#x27;</span> <span class="hljs-comment">// axios实例路径</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_">getProducts</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-keyword">return</span> instance.<span class="hljs-title function_">get</span>(<span class="hljs-string">&#x27;products&#x27;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>组件中使用</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">import</span> &#123; getProducts &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;api.js&#x27;</span><br><br><span class="hljs-title function_">getProducts</span>().<span class="hljs-title function_">then</span>(<span class="hljs-function"><span class="hljs-params">res</span> =&gt;</span> &#123;<br>  <span class="hljs-variable language_">this</span>.<span class="hljs-property">productList</span> = res.<span class="hljs-property">data</span><br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>使用这种方案后续只需要维护<code>mock.js</code>文件,把接口文档相应的内容配置上就可以实现本地开发请求的 mock,可以运行<code>dev</code>或者<code>dev:mock</code>来决定是否启用 mock</p>
+<p>** 这种模式类似于上面修改定义 api 的方式实现 mock，方便之处在于可以全局统一处理，实际上并不会发送 http 请求。</p>
+<h3 id="方案二-proxy-express"><a href="#方案二-proxy-express" class="headerlink" title="方案二 proxy + express"></a>方案二 proxy + express</h3><p>方案一虽然实现了简单的 mock 功能，但实际上思考一下还是有几处不够合理的地方：</p>
+<ol>
+<li>并没有实际发送 http 请求，对请求的整个链路没有做到尽可能真实的模拟</li>
+<li>依赖于 axios 库，其它 http 库能否实现以及实现是否像 axios 一样轻便没有探究，因此可拓展性较差</li>
+<li>功能耦合，mock 作为一个额外的功能模块，把其嵌入到 axios 中处理，会使得 axios 变得略显臃肿</li>
+</ol>
+<p>基于以上几个问题，于是有了使用<code>express</code>启动一个代理服务器，接收我们前端应用的请求来进行 mock 相关的处理，模拟一个完整的 http 请求链路的想法</p>
+<p>首先在项目根目录下新建一个<code>server.js</code>文件，用来写我们代理服务器的代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>)<br><span class="hljs-comment">// 引入mock配置文件</span><br><span class="hljs-keyword">const</span> mockMap = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./mock&#x27;</span>)<br><span class="hljs-keyword">const</span> app = <span class="hljs-title function_">express</span>()<br>app.<span class="hljs-title function_">use</span>(express.<span class="hljs-title function_">json</span>())<br><br>app.<span class="hljs-title function_">all</span>(<span class="hljs-string">&#x27;*&#x27;</span>, requestFilter, <span class="hljs-keyword">async</span> (req, res, next) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123; path &#125; = req<br>  res.<span class="hljs-title function_">send</span>(mockMap[path])<br>&#125;)<br><br><span class="hljs-comment">// 端口和 webpack prxoy中设置对应上，可以随意设置一个未被占用的端口</span><br>app.<span class="hljs-title function_">listen</span>(<span class="hljs-string">&#x27;3306&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;serve is running at port 3306&#x27;</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>通熟易懂，就是监听 3306 端口，拦截所有请求,返回 mock 数据</p>
+<p>修改 webpack 的 proxy 配置，使得运行 mock 脚本时，请求打到我们的代理服务器上,省略其余不相关配置</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// vue.config.js</span><br><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">IS_MOCK</span> = process.<span class="hljs-property">env</span>.<span class="hljs-property">IS_MOCK</span> === <span class="hljs-string">&#x27;true&#x27;</span> <span class="hljs-comment">// 当运行dev:mock时为true</span><br><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">devServer</span>: &#123;<br>    <span class="hljs-comment">// ...</span><br>    <span class="hljs-attr">proxy</span>: &#123;<br>      <span class="hljs-comment">// 所有匹配/api的请求会被转发到target</span><br>      <span class="hljs-string">&#x27;/api&#x27;</span>: &#123;<br>        <span class="hljs-comment">// 开启mock时 设置target为本地代理服务地址，这里端口3306与serve中监听端口保持一致</span><br>        <span class="hljs-attr">target</span>: <span class="hljs-variable constant_">IS_MOCK</span> ? <span class="hljs-string">&#x27;http://localhost:3306/&#x27;</span> : <span class="hljs-string">&#x27;xxxxx&#x27;</span>,<br>        <span class="hljs-attr">ws</span>: <span class="hljs-literal">true</span>,<br>        <span class="hljs-attr">changeOrigin</span>: <span class="hljs-literal">true</span>,<br>        <span class="hljs-attr">pathRewrite</span>: &#123;<br>          <span class="hljs-string">&#x27;^/api&#x27;</span>: <span class="hljs-string">&#x27;&#x27;</span>,<br>        &#125;,<br>      &#125;,<br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>修改一下上文创建 axios 实例的代码<code>instance.defaults.baseURL = &quot;/api&quot;</code>,设置一下所有请求的<code>baseURL</code>，以此来使 proxy 配置匹配所有请求</p>
+<p>完成上述配置，我们重启前端应用，并且启动我们的服务端代码就可以使用 mock 功能了<br>,我们可以修改一下脚本，方便当我们开启 mock 功能的时候自动启动 serve 服务</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs json"><span class="hljs-comment">// package.json</span><br><span class="hljs-attr">&quot;scripts&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-punctuation">&#123;</span><br>    <span class="hljs-attr">&quot;dev&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;vue-cli-service serve&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;build&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;vue-cli-service build&quot;</span><span class="hljs-punctuation">,</span><br>    <span class="hljs-attr">&quot;dev:mock&quot;</span><span class="hljs-punctuation">:</span> <span class="hljs-string">&quot;cross-env IS_MOCK=true vue-cli-service serve &amp; node serve.js&quot;</span><span class="hljs-punctuation">,</span><br>  <span class="hljs-punctuation">&#125;</span><span class="hljs-punctuation">,</span><br></code></pre></td></tr></table></figure>
+
+<p>其实到这里，mock 的功能已经可用了，我们还可以基于现有的代码结合自身的需求的进行拓展</p>
+<h4 id="拓展"><a href="#拓展" class="headerlink" title="拓展"></a>拓展</h4><p>我在项目中使用的时候进行了一点点拓展，给大家提供一个拓展的参考</p>
+<p>修改<code>mock</code>配置文件</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-string">&#x27;/products&#x27;</span>: &#123;<br>    <span class="hljs-attr">code</span>: <span class="hljs-number">0</span>,<br>    <span class="hljs-attr">data</span>: [<br>      &#123;<br>        <span class="hljs-attr">id</span>: <span class="hljs-number">1</span>,<br>        <span class="hljs-attr">name</span>: <span class="hljs-string">&#x27;商品1&#x27;</span>,<br>      &#125;,<br>    ],<br>    <span class="hljs-attr">message</span>: <span class="hljs-string">&#x27;success&#x27;</span>,<br>    <span class="hljs-attr">config</span>: &#123;<br>      <span class="hljs-attr">method</span>: <span class="hljs-string">&#x27;GET&#x27;</span>,<br>      <span class="hljs-attr">delay</span>: <span class="hljs-number">1000</span>,<br>      <span class="hljs-attr">validator</span>: <span class="hljs-function"><span class="hljs-params">request</span> =&gt;</span> &#123;<br>        <span class="hljs-keyword">const</span> error = &#123;<br>          <span class="hljs-attr">status</span>: <span class="hljs-number">400</span>,<br>          <span class="hljs-attr">msg</span>: <span class="hljs-string">&#x27;请检查参数是否合法!&#x27;</span>,<br>        &#125;<br>        <span class="hljs-keyword">const</span> success = &#123;<br>          <span class="hljs-attr">status</span>: <span class="hljs-number">200</span>,<br>          <span class="hljs-attr">msg</span>: <span class="hljs-string">&#x27;success&#x27;</span>,<br>        &#125;<br>        <span class="hljs-comment">// 假设该请求需要一个必传参数 timestamp</span><br>        <span class="hljs-keyword">return</span> request.<span class="hljs-property">query</span>.<span class="hljs-property">timestamp</span> ? success : error<br>      &#125;,<br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>加了额外的 config 字段进行一些差异化配置，例如指定响应延时 1000ms 必传参数校验等</p>
+<p>修改<code>serve</code>端代码</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> express = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;express&#x27;</span>)<br><span class="hljs-keyword">const</span> mockMap = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;./mock&#x27;</span>)<br><span class="hljs-keyword">const</span> app = <span class="hljs-title function_">express</span>()<br>app.<span class="hljs-title function_">use</span>(express.<span class="hljs-title function_">json</span>())<br><br><span class="hljs-comment">// 请求过滤器</span><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">requestFilter</span> = (<span class="hljs-params">req, res, next</span>) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123; path, method &#125; = req<br>  <span class="hljs-comment">// 设置相应头 处理中文乱码</span><br>  res.<span class="hljs-title function_">set</span>(<span class="hljs-string">&#x27;Content-Type&#x27;</span>, <span class="hljs-string">&#x27;text/plain&#x27;</span>)<br>  <span class="hljs-comment">// 404 提前过滤</span><br>  <span class="hljs-keyword">if</span> (!mockMap[path]) &#123;<br>    res.<span class="hljs-title function_">status</span>(<span class="hljs-number">404</span>).<span class="hljs-title function_">end</span>()<br>  &#125;<br>  <span class="hljs-comment">// 请求方法不匹配提前过滤</span><br>  <span class="hljs-keyword">if</span> (method !== mockMap[path].<span class="hljs-property">config</span>?.<span class="hljs-property">method</span> ?? <span class="hljs-string">&#x27;GET&#x27;</span>) &#123;<br>    res.<span class="hljs-title function_">status</span>(<span class="hljs-number">405</span>).<span class="hljs-title function_">end</span>(<span class="hljs-string">&#x27;请检查请求方法是否正确!&#x27;</span>)<br>  &#125;<br>  <span class="hljs-comment">// 自定义校验规则不匹配过滤</span><br>  <span class="hljs-keyword">if</span> (mockMap[path].<span class="hljs-property">config</span> &amp;&amp; mockMap[path].<span class="hljs-property">config</span>.<span class="hljs-property">validator</span>) &#123;<br>    <span class="hljs-keyword">const</span> data = mockMap[path].<span class="hljs-property">config</span>.<span class="hljs-title function_">validator</span>(req)<br>    <span class="hljs-keyword">if</span> (data.<span class="hljs-property">status</span> !== <span class="hljs-number">200</span>) &#123;<br>      res.<span class="hljs-title function_">status</span>(data.<span class="hljs-property">status</span>).<span class="hljs-title function_">end</span>(data.<span class="hljs-property">msg</span>)<br>    &#125;<br>  &#125;<br>  <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-title function_">next</span>()<br>  &#125;, mockMap[path].<span class="hljs-property">config</span>?.<span class="hljs-property">delay</span> ?? <span class="hljs-number">0</span>)<br>&#125;<br>app.<span class="hljs-title function_">all</span>(<span class="hljs-string">&#x27;*&#x27;</span>, requestFilter, <span class="hljs-keyword">async</span> (req, res, next) =&gt; &#123;<br>  <span class="hljs-keyword">const</span> &#123; path &#125; = req<br>  <span class="hljs-comment">// 移除config字段</span><br>  <span class="hljs-keyword">const</span> &#123; code, data, message &#125; = mockMap[path]<br>  res.<span class="hljs-title function_">send</span>(&#123; code, data, message &#125;)<br>&#125;)<br>app.<span class="hljs-title function_">listen</span>(<span class="hljs-string">&#x27;3306&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-variable language_">console</span>.<span class="hljs-title function_">log</span>(<span class="hljs-string">&#x27;serve is running at port 3306&#x27;</span>)<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p>核心就是加了个中间件去处理额外的一些逻辑，可以根据实际需求按需拓展中间件即可</p>
+<p>上述就是我介绍的两种前端实现请求 Mock 的方案，配置起来还是非常简单，新老项目都能轻易的插拔上述 mock 功能来提高开发的效率</p>
+
+      </section>
+
+      
+      
+        <nav class="article-nav">
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover7.webp"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2022/07/21/%E3%80%90leetcode%E3%80%911-%E4%B8%A4%E6%95%B0%E4%B9%8B%E5%92%8C/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">【leetcode】1.两数之和</h2>
+        </a>
+      
+      <div class="card-text--row">Newer</div>
+    </div>
+  </article>
+</div>
+          
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover5.jpeg"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2022/07/06/js%E5%AE%9E%E7%8E%B0%E7%AE%80%E6%98%93LRU%E7%BC%93%E5%AD%98/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">js实现简易LRU缓存</h2>
+        </a>
+      
+      <div class="card-text--row">Older</div>
+    </div>
+  </article>
+</div>
+          
+        </nav>
+      
+
+      <section class="page-message-container layout-padding">
+        
+
+
+  
+  
+    <div class="valine-container comments-container content-padding--primary soft-size--large soft-style--box">
+      <div id="valine_thread" class="valine-thread"></div>
+    </div>
+    <!-- id 将作为查询条件 -->
+    <div id="/2022/07/13/%E5%A6%82%E4%BD%95%E4%BC%98%E9%9B%85%E7%9A%84%E5%AE%9E%E7%8E%B0%E5%89%8D%E7%AB%AF%E8%AF%B7%E6%B1%82Mock/" class="leancloud_visitors" data-flag-title="如何优雅的实现前端请求Mock">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count">1000000</i>
+    </div>
+    <script type="text/javascript" src="https://unpkg.com/leancloud-storage@3.15.0/dist/av-min.js"></script>
+    <script type="text/javascript" src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <script type="text/javascript">
+      new Valine({
+        el: "#valine_thread",
+        appId: "epr01NN7HOiKlcWCvdv8swkK-gzGzoHsz",
+        appKey: "tljBAMawJJHIlAT6oYAnGBz6",
+        avatar: "mm",
+        placeholder: "随便说点什么叭～",
+        notify: true,
+        visitor: true,
+        pageSize: 10,
+        enableQQ: true,
+      });
+    </script>
+  
+
+  
+  
+
+
+      </section>
+    </div>
+    <div class="widget-info">
+      <section class="widget-author widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-body">
+    
+      <img src="https://s.gravatar.com/avatar/e2d21bed4d6ff8daa412b6d5576c4061?s=80" class="soft-size--round soft-style--box" alt="KeyToLove">
+    
+    
+      <h2>KeyToLove</h2>
+    
+    
+      <p>Think twice code once</p>
+    
+
+    <div class="count-box">
+      <div class="count-box--item">
+        <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
+</svg>
+        <span>12</span>
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+        4
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+        4
+      </div>
+    </div>
+  </div>
+</section>
+
+      
+
+      
+<section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-notice" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M512 945.02305225v28.15620663a24.27259221 24.27259221 0 0 1-24.27259221 24.27259335H394.0352a48.54518557 48.54518557 0 0 1-41.74885888-23.78714112l-110.68302222-184.47170332a132.04290333 132.04290333 0 0 1-17.47626667-48.54518557h118.4502511a200.97706667 200.97706667 0 0 1 76.21594113 14.56355556l20.38897777 133.49925888a48.54518557 48.54518557 0 0 0 36.40888888 27.67075555l16.01991111 2.91271112a24.27259221 24.27259221 0 0 1 20.38897778 25.72894889zM997.45185223 463.45481443a194.18074112 194.18074112 0 0 1-38.8361489 116.50844445 24.75804445 24.75804445 0 0 1-36.4088889 0l-34.95253333-34.95253333a24.27259221 24.27259221 0 0 1-2.91271111-30.58346667 97.09036999 97.09036999 0 0 0 0-106.79940665 24.27259221 24.27259221 0 0 1 2.91271111-30.58346666l34.95253333-34.95253334a24.75804445 24.75804445 0 0 1 18.93262223-7.28177777 26.2144 26.2144 0 0 1 17.47626667 9.70903665A194.18074112 194.18074112 0 0 1 997.45185223 463.45481443z m-194.18074112-388.36148111v776.72296335a48.54518557 48.54518557 0 0 1-48.54518556 48.54518443h-28.64165888a48.54518557 48.54518557 0 0 1-33.98163001-14.07810332l-145.63555556-143.20829668A291.27111111 291.27111111 0 0 0 342.57730333 657.63555556H172.18370333a145.63555556 145.63555556 0 0 1-145.63555556-145.63555556v-97.09036999a145.63555556 145.63555556 0 0 1 145.63555556-145.63555556h170.3936a291.27111111 291.27111111 0 0 0 206.31703779-85.43952668l145.63555555-143.20829554a48.54518557 48.54518557 0 0 1 33.98162888-14.07810446H754.72592555a48.54518557 48.54518557 0 0 1 48.54518556 48.54518555z" fill="currentColor"></path>
+</svg>
+    <span>NOTICE</span>
+  </div>
+  <div class="widget-body">
+    <p>Hi there 👋 Welcome to my blog space,hope you hava a good day~</p>
+  </div>
+</section>
+
+
+      <section class="widget-categorys widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+    <span>CATEGORYS</span>
+  </div>
+  <div class="widget-body">
+    <ul class="categorys-list">
+      
+        <li class="categorys-list-item">
+          <a href="/categories/test/">
+            test (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/life/">
+            life (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/%E7%AE%97%E6%B3%95/">
+            算法 (7)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
+            前端工程化 (2)
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+</section>
+
+      <section class="widget-tags widget-item  layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+    <span>TAGS</span>
+  </div>
+  <div class="widget-body">
+    <div class="tags-cloud">
+      <a href="/tags/LRU/" style="font-size: 10px;" class="tags-cloud-0">LRU</a> <a href="/tags/hexo/" style="font-size: 10px;" class="tags-cloud-0">hexo</a> <a href="/tags/leetcode/" style="font-size: 20px;" class="tags-cloud-10">leetcode</a> <a href="/tags/webpack/" style="font-size: 15px;" class="tags-cloud-5">webpack</a>
+    </div>
+  </div>
+</section>
+    </div>
+  </article>
+</div>
+
+    <!-- footer container -->
+<footer id="footer" class="footer">
+  <div class="footer-container">
+    
+    <div class="social-icons">
+      
+        
+      
+        
+      
+        
+      
+        
+          <a href="https://github.com/KeyToLove" class="soft-size--primary soft-style--box" target="_blank" rel="noopener noreferrer">
+            <svg class="icon icon-github" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M64.6 512c0 195.6 125.4 361.9 300.1 422.9 23.5 5.9 19.9-10.8 19.9-22.2v-77.6c-135.8 15.9-141.3-74-150.5-89-18.5-31.5-61.9-39.5-49-54.5 31-15.9 62.5 4 98.9 58 26.4 39.1 77.9 32.5 104.1 26 5.7-23.5 17.9-44.5 34.7-60.9-140.7-25.2-199.4-111.1-199.4-213.3 0-49.5 16.4-95.1 48.4-131.8-20.4-60.6 1.9-112.4 4.9-120.1 58.2-5.2 118.5 41.6 123.3 45.3 33.1-8.9 70.8-13.7 112.9-13.7 42.4 0 80.3 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.4-43.9 2.9 7.7 24.7 58.3 5.5 118.1 32.5 36.8 49 82.8 49 132.4 0 102.3-59 188.3-200.2 213.2 23.5 23.3 38.1 55.5 38.1 91.1v112.7c0.8 9 0 17.9 15.1 17.9C832.7 877 960.4 709.4 960.4 512.1c0-247.5-200.6-447.9-447.9-447.9C265 64.1 64.6 264.5 64.6 512z"></path>
+</svg>
+          </a>
+        
+      
+        
+      
+    </div>
+     
+    <p>&copy; 2023 <a href="https://github.com/KeyToLove/KeyToLove.github.io" target="_blank">KeyToLove</a></p>
+
+    
+
+    <p>Powered by <a href="https://hexo.io" target="_blank" rel="noopener noreferrer">Hexo</a> Theme - <a href="https://github.com/miiiku/flex-block" target="_blank" rel="noopener noreferrer author">flex-block</a></p>
+
+    <p>
+      <a href="javascript:;" id="theme-light">🌞 浅色</a>
+      <a href="javascript:;" id="theme-dark">🌛 深色</a>
+      <a href="javascript:;" id="theme-auto">🤖️ 自动</a>
+    </p>
+  </div>
+</footer>
+  </div>
+
+  <div class="back-to-top-fixed soft-size--round soft-style--box">
+    <svg class="icon icon-back-to-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <path d="M725.333333 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8l-213.333333-213.333333c-17.066667-17.066667-17.066667-42.666667 0-59.733333s42.666667-17.066667 59.733333 0l213.333333 213.333333c17.066667 17.066667 17.066667 42.666667 0 59.733333C746.666667 422.4 738.133333 426.666667 725.333333 426.666667z"></path>
+      <path d="M298.666667 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8-17.066667-17.066667-17.066667-42.666667 0-59.733333l213.333333-213.333333c17.066667-17.066667 42.666667-17.066667 59.733333 0s17.066667 42.666667 0 59.733333l-213.333333 213.333333C320 422.4 311.466667 426.666667 298.666667 426.666667z"></path>
+      <path d="M512 896c-25.6 0-42.666667-17.066667-42.666667-42.666667L469.333333 170.666667c0-25.6 17.066667-42.666667 42.666667-42.666667s42.666667 17.066667 42.666667 42.666667l0 682.666667C554.666667 878.933333 537.6 896 512 896z"></path>
+    </svg>
+  </div>
+
+  
+  <!-- aplayer -->
+
+
+<!-- dplayer -->
+
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+  <!-- 尾部用户自定义相关内容 -->
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+  docsearch({
+
+    appId: 'WEPZYOD6FH',
+
+    apiKey: 'db767917d4cc9abba669fc4196fd3262',
+
+    indexName: 'keytolove',
+
+    container: '#doc-search',
+
+    placeholder:'试试搜索点什么～',
+
+    debug: false // Set debug to true if you want to inspect the modal
+
+  });
+
+</script>
+</body>
+</html>
