@@ -85,7 +85,9 @@
       <div class="post-text layout-block layout-padding">
         <h1 class="title-wrap"><%= page.title %></h1>
         <% if (page.subtitle) { %>
-          <h2 class="title-sub-wrap"><%= page.subtitle %></h2>
+            <% page.subtitle.split('\\n').forEach(function(subtitle) { %>
+               <h2 class="title-sub-wrap"><%= subtitle %></h2>
+            <% }) %>
         <% } %>
       </div>
     </div>
