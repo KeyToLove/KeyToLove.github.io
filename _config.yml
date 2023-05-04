@@ -103,5 +103,5 @@ theme: flex-block
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: git
-  repo: https://github.com/KeyToLove/blogs
+  repo: https://github.com/KeyToLove/KeyToLove.github.io
   branch: gh-pages
