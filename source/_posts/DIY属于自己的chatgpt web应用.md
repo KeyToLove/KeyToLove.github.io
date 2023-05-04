@@ -15,7 +15,7 @@ cover: /images/cover5.jpeg
 
 ## 效果预览
 
-Demo 主要是使用了`openai`的生成图片和对话的 API 接口，实现了如下两个功能
+Demo 主要是使用了`OpenAI`的生成图片和对话的 API 接口，实现了如下两个功能
 先放上几张效果图大伙们感受一下:
 
 - Home Page
@@ -36,9 +36,9 @@ Demo 主要是使用了`openai`的生成图片和对话的 API 接口，实现�
 
 - 网络环境 ok，有 vpn
 
-- 要使用`openai`对外的 API 能力必须得有`openai`的账号并且创建一个 key，这个 key 就是我们调用`oepnai` API 的凭证信息，可以理解成 token。这里对创建账号和生成 key 不额外介绍（已有很多相关教程），贴一下`openai`的链接地址，生成 key 和后续查阅 API 文档都会用到 https://platform.openai.com/
+- 要使用`OpenAI`对外的 API 能力必须得有`OpenAI`的账号并且创建一个 key，这个 key 就是我们调用`oepnai` API 的凭证信息，可以理解成 token。这里对创建账号和生成 key 不额外介绍（已有很多相关教程），贴一下`OpenAI`的链接地址，生成 key 和后续查阅 API 文档都会用到 https://platform.OpenAI.com/
 
-- 最终我们的项目调用`openai` API 采用的是`vercel` `Edge Functions` 的模式，因此可以先行创建`vercel`账号，推荐 `github` 授权即可，免注册 https://vercel.com/
+- 最终我们的项目调用`OpenAI` API 采用的是`vercel` `Edge Functions` 的模式，因此可以先行创建`vercel`账号，推荐 `github` 授权即可，免注册 https://vercel.com/
 
 好的废话说完了，开始操作起来 🕶️
 
@@ -98,16 +98,16 @@ const go = (path: string) => {
 </script>
 ```
 
-#### 服务端调用 openai API
+#### 服务端调用 OpenAI API
 
-采用`vercel` `Edge Functions`的方式，将调用 openai API 的 server 端运行在 vercel 有如下好处：
+采用`vercel` `Edge Functions`的方式，将调用 OpenAI API 的 server 端运行在 vercel 有如下好处：
 
 1. 可以不需要购买服务器进行部署
-2. vercel 云函数节点在纽约等地区，可以避免 proxy 节点污染导致访问 openai API 异常等问题
+2. vercel 云函数节点在纽约等地区，可以避免 proxy 节点污染导致访问 OpenAI API 异常等问题
 
 这一块可以直接参考该项目中 `/api` 目录下逻辑，具体细节可翻阅 `vercel` 文档
 
-#### openai 对话 API 流处理
+#### OpenAI 对话 API 流处理
 
 有使用过`chatgpt`的小伙伴应该知道，当我们发送给它一个问题，它会短暂 loading 后以打字机效果逐字给我们进行回复，因为`chatgpt`的模型十分庞大，如果待完整的处理完用户的输入，再将结果一并返回客户端进行渲染，将会有一段较长的 loading，对话 API 可以接受流的形式返回数据，核心代码如下
 
@@ -119,13 +119,13 @@ import {
   ReconnectInterval,
 } from 'eventsource-parser'
 
-const res = await fetch('https://api.openai.com/v1/chat/completions', {
+const res = await fetch('https://api.OpenAI.com/v1/chat/completions', {
   headers: {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${your_openai_key}`,
   },
   method: 'POST',
-  body: JSON.stringify(payload), // payload 为API参数，可查阅openai对应文档 https://platform.openai.com/docs/api-reference/completions/create
+  body: JSON.stringify(payload), // payload 为API参数，可查阅openai对应文档 https://platform.OpenAI.com/docs/api-reference/completions/create
 })
 
 const stream = new ReadableStream({
@@ -134,7 +134,7 @@ const stream = new ReadableStream({
     function onParse(event: ParsedEvent | ReconnectInterval) {
       if (event.type === 'event') {
         const data = event.data
-        // https://beta.openai.com/docs/api-reference/completions/create#completions/create-stream
+        // https://beta.OpenAI.com/docs/api-reference/completions/create#completions/create-stream
         if (data === '[DONE]') {
           controller.close()
           return
@@ -225,9 +225,9 @@ const addCopyButton = () => {
 
 ## 写在最后
 
-项目 github 仓库地址：https://github.com/KeyToLove/chatgpt-demo
-项目 vercel 体验地址：https://chatgpt-keytolove.vercel.app/
+项目 github 仓库地址：https://github.com/KeyToLove/awesome-gpt
+项目 vercel 体验地址：https://awesomegpt-keytolove.vercel.app/#/
 
 项目受 [twitterbio](https://github.com/Nutlope/twitterbio) 启发，感谢 🙏
 
-欢迎大家分享 open API 使用上更多好玩的点子 💡 喜欢的话可以点个 👍 和 给仓库一个 star ～
+欢迎大家分享 OpenAI API 使用上更多好玩的点子 💡 喜欢的话可以点个 👍 和 给仓库一个 star ～
