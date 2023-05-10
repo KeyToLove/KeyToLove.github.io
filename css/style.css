@@ -1056,7 +1056,7 @@ html.show-mobile-nav .navbar-list {
 @media screen and (min-width: 768px) {
   .content-container.post-container .article-info .page-link-container .link-item {
     max-width: 100%;
-    min-width: 33.333%;
+    min-width: 50%;
     flex: 1 0 auto;
   }
 }
