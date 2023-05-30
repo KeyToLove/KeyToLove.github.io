@@ -7,7 +7,7 @@ dplayer: true
 ---
 
 {%  aplayer
-    url="/music/⛲️.flac"
+    url="http://lc-epr01NN7.cn-n1.lcfile.com/oojcFv1LYhrKyhXdbBuFwHi7qG4Dp3OL/%E5%87%BA%E7%8E%B0%E5%8F%88%E7%A6%BB%E5%BC%80.mp4"
     name="⛲️"
     artist="老田"
 %}
