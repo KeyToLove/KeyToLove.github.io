@@ -7,12 +7,12 @@ dplayer: true
 ---
 
 {%  aplayer
-    url="http://lc-epr01NN7.cn-n1.lcfile.com/oojcFv1LYhrKyhXdbBuFwHi7qG4Dp3OL/%E5%87%BA%E7%8E%B0%E5%8F%88%E7%A6%BB%E5%BC%80.mp4"
+    url="http://lc-epr01NN7.cn-n1.lcfile.com/qt0Iuhc6qwmzYi9d9BBymm7q1je31FFB/%E2%9B%B2%EF%B8%8F.flac"
     name="⛲️"
     artist="老田"
 %}
 
 <h1>Bio</h1>
-前端工程师，喜欢新鲜事物，热爱旅行 & 游戏 & 音乐，目前base深圳
+前端工程师，喜欢新鲜事物，热爱旅行 & 游戏 & 音乐  💗
 <h1>Contact me</h1>
 Email: codeEDC@163.com

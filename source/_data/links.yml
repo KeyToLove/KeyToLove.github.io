@@ -1,6 +1,6 @@
 - {
     'name': '测试友情链接',
-    'link': 'javascript:;',
+    'link': 'https://github.com/KeyToLove',
     'description': '这是一条友情链接',
     'avatar': 'https://avatars.githubusercontent.com/u/54970106?v=4',
   }
