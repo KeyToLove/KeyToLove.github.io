@@ -1,13 +1,14 @@
+import fs from 'node:fs';
+import path from 'node:path';
+
 import spawn from 'cross-spawn';
-import fs from 'fs';
 import inquirer from 'inquirer';
 import { cyan, green, yellow } from 'kolorist';
-import path from 'path';
 import prettier from 'prettier';
 import { inc } from 'semver';
 import { ReleaseType } from 'semver';
 
-import pkg from '../package.json' assert { type: 'json' };
+import pkg from '../package.json';
 
 const currentVersion = pkg.version;
 
@@ -48,6 +49,7 @@ const run = (command: string, args: string[]) => {
   const result = spawn.sync(command, args, {
     stdio: 'inherit',
   });
+  // Exit if error.
   if (result.status) {
     process.exit(result.status);
   }
@@ -141,6 +143,16 @@ const build = () => {
 //   taskLogWithTimeInfo('发布library', 'end');
 // };
 
+/**
+ * 打tag提交至git
+ */
+const tag = (nextVersion: string) => {
+  taskLogWithTimeInfo('打tag并推送至git', 'start');
+  run('git', ['tag', `v${nextVersion}`]);
+  run('git', ['push', 'origin', 'tag', `v${nextVersion}`]);
+  taskLogWithTimeInfo('打tag并推送至git', 'end');
+};
+
 async function main() {
   const nextVersion = await prompt();
   const startTime = Date.now();
@@ -152,6 +164,10 @@ async function main() {
   build();
   /**  =================== 推送代码至git仓库 ===================   */
   push(nextVersion);
+  /**  =================== 发布至npm ===================   */
+  // publish();
+  /**  =================== 打tag并推送至git ===================   */
+  tag(nextVersion);
   console.log(
     green(
       `✨ 发布流程结束 共耗时${((Date.now() - startTime) / 1000).toFixed(
