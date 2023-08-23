@@ -1,9 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-import spawn from 'cross-spawn';
+import { execa } from 'execa';
 import inquirer from 'inquirer';
 import { cyan, green, yellow } from 'kolorist';
+import { createSpinner } from 'nanospinner';
 import prettier from 'prettier';
 import { inc } from 'semver';
 import { ReleaseType } from 'semver';
@@ -14,46 +15,66 @@ const currentVersion = pkg.version;
 
 const CWD = process.cwd();
 
-let taskStartTime: number, taskEndTime: number;
+let nextVersion: string;
 
-const taskLogWithTimeInfo = (logInfo: string, type: 'start' | 'end') => {
-  let info = '';
-  if (type === 'start') {
-    info = `⏩ 开始任务：${logInfo}`;
-    taskStartTime = Date.now();
-  } else {
-    info = `✅ 结束任务：${logInfo}`;
-    taskEndTime = Date.now();
-  }
-  const nowDate = new Date();
-  console.log(
-    `[${nowDate.toLocaleString()}.${nowDate
-      .getMilliseconds()
-      .toString()
-      .padStart(3, '0')}] ${cyan(info)}
-      `
-  );
+// const taskLogWithTimeInfo = (logInfo: string, type: 'start' | 'end') => {
+//   let info = '';
+//   if (type === 'start') {
+//     info = `⏩ 开始任务：${logInfo}`;
+//     taskStartTime = Date.now();
+//   } else {
+//     info = `✅ 结束任务：${logInfo}`;
+//     taskEndTime = Date.now();
+//   }
+//   const nowDate = new Date();
+//   console.log(
+//     `[${nowDate.toLocaleString()}.${nowDate
+//       .getMilliseconds()
+//       .toString()
+//       .padStart(3, '0')}] ${cyan(info)}
+//       `
+//   );
 
-  if (type === 'end') {
+//   if (type === 'end') {
+//     console.log(
+//       yellow(
+//         `该步骤耗时:   ${((taskEndTime - taskStartTime) / 1000).toFixed(3)}s ` +
+//           '\n'
+//       )
+//     );
+//     taskStartTime = taskEndTime = 0;
+//   }
+// };
+
+const runTask = async (taskName: string, task: () => Promise<unknown>) => {
+  const startTime = new Date();
+  const s = createSpinner(`[${startTime.toLocaleString()}.${startTime
+    .getMilliseconds()
+    .toString()
+    .padStart(3, '0')}] ${cyan(`⏩ 开始任务：${taskName}`)}
+          `).start();
+  try {
+    await task();
+    const endTime = new Date();
+    s.success({
+      text: `[${endTime.toLocaleString()}.${endTime
+        .getMilliseconds()
+        .toString()
+        .padStart(3, '0')}] ${cyan(`✅ 结束任务：${taskName}`)}
+      `,
+    });
     console.log(
       yellow(
-        `该步骤耗时:   ${((taskEndTime - taskStartTime) / 1000).toFixed(3)}s ` +
-          '\n'
+        `该步骤耗时:   ${(
+          (endTime.getTime() - startTime.getTime()) /
+          1000
+        ).toFixed(3)}s ` + '\n'
       )
     );
-    taskStartTime = taskEndTime = 0;
+  } catch (error) {
+    s.error({ text: `${taskName} failed!` });
+    process.exit(1);
   }
-};
-
-const run = (command: string, args: string[]) => {
-  const result = spawn.sync(command, args, {
-    stdio: 'inherit',
-  });
-  // Exit if error.
-  if (result.status) {
-    process.exit(result.status);
-  }
-  return result;
 };
 
 /**
@@ -75,23 +96,19 @@ const getNextVersions = (): { [key in ReleaseType]: string | null } => {
 /**
  * 生成CHANGELOG
  */
-function generateChangelog() {
-  taskLogWithTimeInfo('生成CHANGELOG.md', 'start');
+const generateChangelog = () => {
+  return execa('npm', ['run', 'changelog'], {
+    stdio: 'inherit',
+  });
+};
 
-  run('npm', ['run', 'changelog']);
-
-  taskLogWithTimeInfo('生成CHANGELOG.md', 'end');
-}
-
-async function updateVersion(nextVersion: string) {
+const updateVersion = async () => {
   pkg.version = nextVersion;
-  taskLogWithTimeInfo('修改package.json版本号', 'start');
   const code = await prettier.format(JSON.stringify(pkg), {
     parser: 'json',
   });
   fs.writeFileSync(path.resolve(CWD, './package.json'), code);
-  taskLogWithTimeInfo('修改package.json版本号', 'end');
-}
+};
 
 const prompt = async (): Promise<string> => {
   const nextVersions = getNextVersions();
@@ -117,21 +134,25 @@ const prompt = async (): Promise<string> => {
 /**
  * 将代码提交至git
  */
-const push = (nextVersion: string) => {
-  taskLogWithTimeInfo('推送代码至git仓库', 'start');
-  run('git', ['add', 'package.json', 'CHANGELOG.md']);
-  run('git', ['commit', '-m', `v${nextVersion}`, '-n']);
-  run('git', ['push']);
-  taskLogWithTimeInfo('推送代码至git仓库', 'end');
+const push = async () => {
+  await execa('git', ['add', 'package.json', 'CHANGELOG.md'], {
+    stdio: 'inherit',
+  });
+  await execa('git', ['commit', '-m', `v${nextVersion}`, '-n'], {
+    stdio: 'inherit',
+  });
+  await execa('git', ['push'], {
+    stdio: 'inherit',
+  });
 };
 
 /**
  * library库打包
  */
-const build = () => {
-  taskLogWithTimeInfo('library库打包', 'start');
-  run('npm', ['run', 'build']);
-  taskLogWithTimeInfo('library库打包', 'end');
+const build = async () => {
+  await execa('npm', ['run', 'build'], {
+    stdio: 'inherit',
+  });
 };
 
 /**
@@ -146,28 +167,30 @@ const build = () => {
 /**
  * 打tag提交至git
  */
-const tag = (nextVersion: string) => {
-  taskLogWithTimeInfo('打tag并推送至git', 'start');
-  run('git', ['tag', `v${nextVersion}`]);
-  run('git', ['push', 'origin', 'tag', `v${nextVersion}`]);
-  taskLogWithTimeInfo('打tag并推送至git', 'end');
+const tag = async () => {
+  await execa('git', ['tag', `v${nextVersion}`], {
+    stdio: 'inherit',
+  });
+  await execa('git', ['push', 'origin', 'tag', `v${nextVersion}`], {
+    stdio: 'inherit',
+  });
 };
 
-async function main() {
-  const nextVersion = await prompt();
+async function taskQueen() {
+  nextVersion = await prompt();
   const startTime = Date.now();
   /**  =================== 更新版本号 ===================   */
-  await updateVersion(nextVersion);
+  await updateVersion();
   /**  =================== 生成changelog ===================   */
-  generateChangelog();
+  await runTask('生成changelog', generateChangelog);
   /**  =================== 打包 ===================   */
-  build();
+  await runTask('build', build);
   /**  =================== 推送代码至git仓库 ===================   */
-  push(nextVersion);
+  await runTask('推送代码至git仓库', push);
   /**  =================== 发布至npm ===================   */
   // publish();
   /**  =================== 打tag并推送至git ===================   */
-  tag(nextVersion);
+  await runTask('打tag并推送至git', tag);
   console.log(
     green(
       `✨ 发布流程结束 共耗时${((Date.now() - startTime) / 1000).toFixed(
@@ -177,6 +200,6 @@ async function main() {
   );
 }
 
-main().catch((e) => {
+taskQueen().catch((e) => {
   console.log(e);
 });
