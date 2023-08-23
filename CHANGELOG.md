@@ -1,6 +1,7 @@
-## 0.0.6 (2023-08-23)
+## 0.0.7 (2023-08-23)
 
 
+* v0.0.6 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/85606083c5df43c708678a168c0cc23d1960629a))
 * v0.0.5 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/e681ce724068e40779015e89cf8aed70120747a8))
 * v0.0.4 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/f3458a2e8086d00bd84f56f7a37a942775fc60ed))
 * v0.0.3 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/87b009e2e98be08b1794eb9d6b6030c5b8c75971))
