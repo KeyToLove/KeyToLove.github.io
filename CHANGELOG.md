@@ -1,4 +1,11 @@
+## [1.0.1](https://github.com/KeyToLove/KeyToLove.github.io/compare/v1.0.0...v1.0.1) (2023-08-23)
+
+
+
 # [1.0.0](https://github.com/KeyToLove/KeyToLove.github.io/compare/v1.0.0-0...v1.0.0) (2023-08-23)
+
+
+* v1.0.0 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/c97f1f3b2bffd18fb9052b8be79235596d4456fd))
 
 
 
