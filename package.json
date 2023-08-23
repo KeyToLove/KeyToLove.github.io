@@ -1,0 +1,44 @@
+{
+  "name": "release-demo",
+  "version": "1.0.0",
+  "description": "",
+  "module": "dist/index.mjs",
+  "main": "dist/index.mjs",
+  "type": "module",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "unbuild --stub",
+    "build": "unbuild",
+    "release": "tsx ./scripts/release.ts",
+    "changelog": "conventional-changelog -p angular -n './changelog.config.cjs' -i CHANGELOG.md -s ",
+    "wsf-lint": "eslint-config-wsf lint",
+    "postinstall": "eslint-config-wsf postinstall"
+  },
+  "files": [
+    "dist",
+    "src",
+    "CHANGELOG.md",
+    "README.md"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/cross-spawn": "^6.0.2",
+    "@types/inquirer": "^9.0.3",
+    "@types/node": "^20.5.0",
+    "@types/react": "^18.2.20",
+    "@types/semver": "^7.5.0",
+    "conventional-changelog-cli": "^3.0.0",
+    "cross-spawn": "^7.0.3",
+    "eslint": "^8.47.0",
+    "eslint-config-wsf": "^1.0.4",
+    "inquirer": "^9.2.10",
+    "kolorist": "^1.8.0",
+    "prettier": "^3.0.2",
+    "semver": "^7.5.4",
+    "tsc": "^2.0.4",
+    "typescript": "^5.1.6",
+    "unbuild": "^1.2.1"
+  }
+}
