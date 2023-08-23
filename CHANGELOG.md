@@ -1,6 +1,11 @@
+# [1.2.0](https://github.com/KeyToLove/KeyToLove.github.io/compare/v1.1.0...v1.2.0) (2023-08-23)
+
+
+
 # [1.1.0](https://github.com/KeyToLove/KeyToLove.github.io/compare/v1.0.3...v1.1.0) (2023-08-23)
 
 
+* v1.1.0 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/3648039c5d59e1e2d52eb5b45b24320b073e17fc))
 * 重构 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/421332a2aef75cbbcc76ee46e917f02bc278a96f))
 * v1.0.4 ([](https://github.com/KeyToLove/KeyToLove.github.io/commit/78d87d24246d9eab572b1cdcd063ead8a590641b))
 
