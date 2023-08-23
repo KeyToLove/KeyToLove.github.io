@@ -1,6 +1,6 @@
 {
   "name": "release-demo",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "",
   "module": "dist/index.mjs",
   "main": "dist/index.mjs",
@@ -30,7 +30,9 @@
     "eslint-config-wsf": "^1.0.4",
     "inquirer": "^9.2.10",
     "kolorist": "^1.8.0",
+    "nanospinner": "^1.1.0",
     "prettier": "^3.0.2",
+    "react": "^18.2.0",
     "semver": "^7.5.4",
     "tsc": "^2.0.4",
     "typescript": "^5.1.6",
