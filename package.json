@@ -1,6 +1,6 @@
 {
   "name": "release-demo",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "",
   "module": "dist/index.mjs",
   "main": "dist/index.mjs",
