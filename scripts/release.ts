@@ -4,6 +4,7 @@ import path from 'node:path';
 import spawn from 'cross-spawn';
 import inquirer from 'inquirer';
 import { cyan, green, yellow } from 'kolorist';
+import { createSpinner, Spinner } from 'nanospinner';
 import prettier from 'prettier';
 import { inc } from 'semver';
 import { ReleaseType } from 'semver';
@@ -14,7 +15,7 @@ const currentVersion = pkg.version;
 
 const CWD = process.cwd();
 
-let taskStartTime: number, taskEndTime: number;
+let taskStartTime: number, taskEndTime: number, s: Spinner;
 
 const taskLogWithTimeInfo = (logInfo: string, type: 'start' | 'end') => {
   let info = '';
@@ -26,21 +27,21 @@ const taskLogWithTimeInfo = (logInfo: string, type: 'start' | 'end') => {
     taskEndTime = Date.now();
   }
   const nowDate = new Date();
-  console.log(
+  s = createSpinner(
     `[${nowDate.toLocaleString()}.${nowDate
       .getMilliseconds()
       .toString()
       .padStart(3, '0')}] ${cyan(info)}
       `
-  );
+  ).start();
 
   if (type === 'end') {
-    console.log(
-      yellow(
+    s.success({
+      text: yellow(
         `该步骤耗时:   ${((taskEndTime - taskStartTime) / 1000).toFixed(3)}s ` +
           '\n'
-      )
-    );
+      ),
+    });
     taskStartTime = taskEndTime = 0;
   }
 };
