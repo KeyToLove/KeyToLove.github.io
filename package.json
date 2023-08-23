@@ -1,6 +1,6 @@
 {
   "name": "release-demo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "",
   "module": "dist/index.mjs",
   "main": "dist/index.mjs",
@@ -14,12 +14,7 @@
     "wsf-lint": "eslint-config-wsf lint",
     "postinstall": "eslint-config-wsf postinstall"
   },
-  "files": [
-    "dist",
-    "src",
-    "CHANGELOG.md",
-    "README.md"
-  ],
+  "files": ["dist", "src", "CHANGELOG.md", "README.md"],
   "keywords": [],
   "author": "",
   "license": "ISC",
