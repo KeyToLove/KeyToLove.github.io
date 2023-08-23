@@ -1,6 +1,6 @@
 {
   "name": "release-demo",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "",
   "module": "dist/index.mjs",
   "main": "dist/index.mjs",
@@ -10,7 +10,7 @@
     "dev": "unbuild --stub",
     "build": "unbuild",
     "release": "tsx ./scripts/release.ts",
-    "changelog": "conventional-changelog -p angular -n './changelog.config.cjs' -i CHANGELOG.md -s ",
+    "changelog": "conventional-changelog -p angular -n './changelog.config.cjs' -i CHANGELOG.md -s -r 0",
     "wsf-lint": "eslint-config-wsf lint",
     "postinstall": "eslint-config-wsf postinstall"
   },
