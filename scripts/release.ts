@@ -3,8 +3,7 @@ import path from 'node:path';
 
 import { execa } from 'execa';
 import inquirer from 'inquirer';
-import { cyan, green, yellow } from 'kolorist';
-import { createSpinner } from 'nanospinner';
+import { cyan, green, red, yellow } from 'kolorist';
 import prettier from 'prettier';
 import { inc } from 'semver';
 import { ReleaseType } from 'semver';
@@ -17,52 +16,16 @@ const CWD = process.cwd();
 
 let nextVersion: string;
 
-// const taskLogWithTimeInfo = (logInfo: string, type: 'start' | 'end') => {
-//   let info = '';
-//   if (type === 'start') {
-//     info = `⏩ 开始任务：${logInfo}`;
-//     taskStartTime = Date.now();
-//   } else {
-//     info = `✅ 结束任务：${logInfo}`;
-//     taskEndTime = Date.now();
-//   }
-//   const nowDate = new Date();
-//   console.log(
-//     `[${nowDate.toLocaleString()}.${nowDate
-//       .getMilliseconds()
-//       .toString()
-//       .padStart(3, '0')}] ${cyan(info)}
-//       `
-//   );
-
-//   if (type === 'end') {
-//     console.log(
-//       yellow(
-//         `该步骤耗时:   ${((taskEndTime - taskStartTime) / 1000).toFixed(3)}s ` +
-//           '\n'
-//       )
-//     );
-//     taskStartTime = taskEndTime = 0;
-//   }
-// };
-
 const runTask = async (taskName: string, task: () => Promise<unknown>) => {
   const startTime = new Date();
-  const s = createSpinner(`[${startTime.toLocaleString()}.${startTime
+  console.log(`[${startTime.toLocaleString()}.${startTime
     .getMilliseconds()
     .toString()
-    .padStart(3, '0')}] ${cyan(`⏩ 开始任务：${taskName}`)}
-          `).start();
+    .padStart(3, '0')}] ${cyan(`⏩ Run task：${taskName}`)}
+          `);
   try {
     await task();
     const endTime = new Date();
-    s.success({
-      text: `[${endTime.toLocaleString()}.${endTime
-        .getMilliseconds()
-        .toString()
-        .padStart(3, '0')}] ${cyan(`✅ 结束任务：${taskName}`)}
-      `,
-    });
     console.log(
       yellow(
         `该步骤耗时:   ${(
@@ -72,7 +35,7 @@ const runTask = async (taskName: string, task: () => Promise<unknown>) => {
       )
     );
   } catch (error) {
-    s.error({ text: `${taskName} failed!` });
+    console.log(red(`${taskName} failed!`));
     process.exit(1);
   }
 };
@@ -184,7 +147,7 @@ async function taskQueen() {
   /**  =================== 生成changelog ===================   */
   await runTask('生成changelog', generateChangelog);
   /**  =================== 打包 ===================   */
-  await runTask('build', build);
+  await runTask('源码build', build);
   /**  =================== 推送代码至git仓库 ===================   */
   await runTask('推送代码至git仓库', push);
   /**  =================== 发布至npm ===================   */
