@@ -26,7 +26,7 @@
 
   
 
-  <title>DIY属于自己的chatgpt web应用 | KeyToLove Blog Space</title>
+  <title>DIY Chatgpt Web 应用 | KeyToLove Blog Space</title>
 
   
 
@@ -102,13 +102,15 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">DIY属于自己的chatgpt web应用</h1>
+          <h1 class="title-wrap">DIY Chatgpt Web 应用</h1>
           <h2 class="title-sub-wrap">
             <strong>KeyToLove</strong>
             <span>发布于</span>
             <time  class="article-date" datetime="2023-03-29T08:40:12.000Z" itemprop="datePublished">2023-03-29</time>
           </h2>
           <ul class="wrap-list dark">
+  
+    <li><a href="/categories/AI/">📒 AI</a></li>
   
 </ul>
           <ul class="wrap-list dark">
@@ -141,10 +143,10 @@
 <h2 id="效果预览"><a href="#效果预览" class="headerlink" title="效果预览"></a>效果预览</h2><p>Demo 主要是使用了<code>OpenAI</code>的生成图片和对话的 API 接口，实现了如下两个功能<br>先放上几张效果图大伙们感受一下:</p>
 <ul>
 <li><p>Home Page</p>
-<p><img src="/images/chatgpt06.jpg" alt="首页"></p>
+<p><img src="/images/chatgpt06.jpeg" alt="首页"></p>
 </li>
 <li><p>示例-1: 根据描述生成图片 &amp; 翻译</p>
-<p><img src="/images/chatgpt02.jpg" alt="示例-1"></p>
+<p><img src="/images/chatgpt02.jpeg" alt="示例-1"></p>
 </li>
 <li><p>示例-2: 智能 AI 对话</p>
 <p><img src="/images/chatgpt03.jpg" alt="示例-2"></p>
@@ -171,9 +173,10 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs plaintext">npm create vite@latest &lt;your_project_name&gt; -- --template vue<br></code></pre></td></tr></table></figure>
 
 <p>项目初始化后我们可以删除模版多余模块仅保留入口文件即可，毕竟是 DIY 自己的 web 应用，前端页面的布局可以随性发挥，自己怎么喜欢怎么来。接下来会结合应用中的 demo 挑选部分逻辑讲解。</p>
-<h4 id="前端路由"><a href="#前端路由" class="headerlink" title="前端路由"></a>前端路由</h4><p>本应用暂时只包含<code>Demo-1</code> <code>Demo-2</code>两个示例，所以并没有额外引入<code>vue-router</code>,而是直接通过监听 url hash 值的变化，用动态组件的方式渲染对应的示例</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;nav&quot;</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;go(&#x27;demo-1&#x27;)&quot;</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123; active: activeRoute === &#x27;demo-1&#x27; &#125;&quot;</span>&gt;</span></span><br><span class="language-xml">      Demo-1</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;go(&#x27;demo-2&#x27;)&quot;</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123; active: activeRoute === &#x27;demo-2&#x27; &#125;&quot;</span>&gt;</span></span><br><span class="language-xml">      Demo-2</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">component</span> <span class="hljs-attr">:is</span>=<span class="hljs-string">&quot;currentView&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">component</span>&gt;</span></span><br>&lt;/template&gt;<br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">setup</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;ts&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">const</span> currentPath = <span class="hljs-title function_">ref</span>(<span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">hash</span>)</span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-variable language_">window</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;hashchange&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  currentPath.<span class="hljs-property">value</span> = <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">hash</span></span></span><br><span class="language-javascript"><span class="language-xml">&#125;)</span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">const</span> activeRoute = <span class="hljs-title function_">computed</span>(<span class="hljs-function">() =&gt;</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-keyword">return</span> currentPath.<span class="hljs-property">value</span> === <span class="hljs-string">&#x27;#/demo-2&#x27;</span> ? <span class="hljs-string">&#x27;demo-2&#x27;</span> : <span class="hljs-string">&#x27;demo-1&#x27;</span></span></span><br><span class="language-javascript"><span class="language-xml">&#125;)</span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">const</span> <span class="hljs-title function_">go</span> = (<span class="hljs-params">path: string</span>) =&gt; &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">href</span> = <span class="hljs-string">`#/<span class="hljs-subst">$&#123;path&#125;</span>`</span></span></span><br><span class="language-javascript"><span class="language-xml">&#125;</span></span><br><span class="language-javascript"><span class="language-xml"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br></code></pre></td></tr></table></figure>
+<h4 id="前端路由"><a href="#前端路由" class="headerlink" title="前端路由"></a>前端路由</h4><p><del>本应用暂时只包含<code>Demo-1</code> <code>Demo-2</code>两个示例，所以并没有额外引入<code>vue-router</code>,而是直接通过监听 url hash 值的变化，用动态组件的方式渲染对应的示例</del></p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs js">&lt;template&gt;<br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">&quot;nav&quot;</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;go(&#x27;demo-1&#x27;)&quot;</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123; active: activeRoute === &#x27;demo-1&#x27; &#125;&quot;</span>&gt;</span></span><br><span class="language-xml">      Demo-1</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> @<span class="hljs-attr">click</span>=<span class="hljs-string">&quot;go(&#x27;demo-2&#x27;)&quot;</span> <span class="hljs-attr">:class</span>=<span class="hljs-string">&quot;&#123; active: activeRoute === &#x27;demo-2&#x27; &#125;&quot;</span>&gt;</span></span><br><span class="language-xml">      Demo-2</span><br><span class="language-xml">    <span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></span><br><span class="language-xml">  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></span><br>  <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">component</span> <span class="hljs-attr">:is</span>=<span class="hljs-string">&quot;currentView&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">component</span>&gt;</span></span><br>&lt;/template&gt;<br><br><span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">setup</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;ts&quot;</span>&gt;</span><span class="language-javascript"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">const</span> currentPath = <span class="hljs-title function_">ref</span>(<span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">hash</span>)</span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-variable language_">window</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;hashchange&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  currentPath.<span class="hljs-property">value</span> = <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">hash</span></span></span><br><span class="language-javascript"><span class="language-xml">&#125;)</span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">const</span> activeRoute = <span class="hljs-title function_">computed</span>(<span class="hljs-function">() =&gt;</span> &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-keyword">return</span> currentPath.<span class="hljs-property">value</span> === <span class="hljs-string">&#x27;#/demo-2&#x27;</span> ? <span class="hljs-string">&#x27;demo-2&#x27;</span> : <span class="hljs-string">&#x27;demo-1&#x27;</span></span></span><br><span class="language-javascript"><span class="language-xml">&#125;)</span></span><br><span class="language-javascript"><span class="language-xml"></span></span><br><span class="language-javascript"><span class="language-xml"><span class="hljs-keyword">const</span> <span class="hljs-title function_">go</span> = (<span class="hljs-params">path: string</span>) =&gt; &#123;</span></span><br><span class="language-javascript"><span class="language-xml">  <span class="hljs-variable language_">window</span>.<span class="hljs-property">location</span>.<span class="hljs-property">href</span> = <span class="hljs-string">`#/<span class="hljs-subst">$&#123;path&#125;</span>`</span></span></span><br><span class="language-javascript"><span class="language-xml">&#125;</span></span><br><span class="language-javascript"><span class="language-xml"></span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></span><br><br></code></pre></td></tr></table></figure>
 
+<p>现因为存在多个模块，考虑到拓展能力，采用 vue 官方 vue-router 来处理路由</p>
 <h4 id="服务端调用-OpenAI-API"><a href="#服务端调用-OpenAI-API" class="headerlink" title="服务端调用 OpenAI API"></a>服务端调用 OpenAI API</h4><p>采用<code>vercel</code> <code>Edge Functions</code>的方式，将调用 OpenAI API 的 server 端运行在 vercel 有如下好处：</p>
 <ol>
 <li>可以不需要购买服务器进行部署</li>
@@ -189,7 +192,7 @@
 <p>AI 回复完成后追加 copy 按钮</p>
 <figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> <span class="hljs-title function_">addCopyButton</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-comment">// 找到所有 marked 解析后的代码块</span><br>  <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">querySelectorAll</span>(<span class="hljs-string">&#x27;pre code&#x27;</span>).<span class="hljs-title function_">forEach</span>(<span class="hljs-function">(<span class="hljs-params">block: Element</span>) =&gt;</span> &#123;<br>    <span class="hljs-keyword">const</span> parentNode = block.<span class="hljs-property">parentElement</span> <span class="hljs-keyword">as</span> <span class="hljs-title class_">HTMLElement</span><br>    <span class="hljs-comment">// 忽略已经添加复制按钮的代码块</span><br>    <span class="hljs-keyword">if</span> (parentNode?.<span class="hljs-property">firstChild</span>?.<span class="hljs-property">nodeName</span> === <span class="hljs-string">&#x27;BUTTON&#x27;</span>) &#123;<br>      <span class="hljs-keyword">return</span><br>    &#125;<br>    <span class="hljs-keyword">const</span> copyButton = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;button&#x27;</span>)<br>    copyButton.<span class="hljs-property">className</span> = <span class="hljs-string">&#x27;copy-button&#x27;</span><br>    copyButton.<span class="hljs-property">textContent</span> = <span class="hljs-string">&#x27;Copy&#x27;</span><br>    parentNode.<span class="hljs-title function_">insertBefore</span>(copyButton, block)<br>    <span class="hljs-comment">// 添加复制功能</span><br>    copyButton.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;click&#x27;</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>      <span class="hljs-keyword">const</span> code = block.<span class="hljs-property">textContent</span> <span class="hljs-keyword">as</span> <span class="hljs-built_in">string</span><br>      <span class="hljs-keyword">const</span> el = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">createElement</span>(<span class="hljs-string">&#x27;textarea&#x27;</span>)<br>      el.<span class="hljs-property">value</span> = code<br>      <span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">appendChild</span>(el)<br>      el.<span class="hljs-title function_">select</span>()<br>      <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">execCommand</span>(<span class="hljs-string">&#x27;copy&#x27;</span>)<br>      <span class="hljs-variable language_">document</span>.<span class="hljs-property">body</span>.<span class="hljs-title function_">removeChild</span>(el)<br>      copyButton.<span class="hljs-property">textContent</span> = <span class="hljs-string">&#x27;Copied!&#x27;</span><br>      <span class="hljs-built_in">setTimeout</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>        copyButton.<span class="hljs-property">textContent</span> = <span class="hljs-string">&#x27;Copy&#x27;</span><br>      &#125;, <span class="hljs-number">2000</span>)<br>    &#125;)<br>  &#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<h4 id="对话记录持久化"><a href="#对话记录持久化" class="headerlink" title="对话记录持久化"></a>对话记录持久化</h4><p>每完成一次对话操作将对话内容持久化存储<code>localStorage</code>中，初始化的时候读取本地对话历史进行渲染，请求时携带对话上下文历史信息，这里有很多 Todo,例如不只是记录一条对话历史，像<code>chatgpt</code>记录近期完整的对话记录等</p>
+<h4 id="对话记录持久化"><a href="#对话记录持久化" class="headerlink" title="对话记录持久化"></a>对话记录持久化</h4><p>每完成一次对话操作将对话内容持久化存储<code>localStorage</code>中，初始化的时候读取本地对话历史进行渲染，请求时携带对话上下文历史信息.<br><del>这里有很多 Todo,例如不只是记录一条对话历史，像<code>chatgpt</code>记录近期完整的对话记录等</del><br>目前已支持多回话历史记录功能，方便翻阅之前相关对话.</p>
 <h2 id="写在最后"><a href="#写在最后" class="headerlink" title="写在最后"></a>写在最后</h2><p>项目 github 仓库地址：<a target="_blank" rel="noopener" href="https://github.com/KeyToLove/awesome-gpt">https://github.com/KeyToLove/awesome-gpt</a><br>项目 vercel 体验地址：<a target="_blank" rel="noopener" href="https://awesomegpt-keytolove.vercel.app/#/">https://awesomegpt-keytolove.vercel.app/#/</a></p>
 <p>项目受 <a target="_blank" rel="noopener" href="https://github.com/Nutlope/twitterbio">twitterbio</a> 启发，感谢 🙏</p>
 <p>欢迎大家分享 OpenAI API 使用上更多好玩的点子 💡 喜欢的话可以点个 👍 和 给仓库一个 star ～</p>
@@ -199,6 +202,22 @@
       
       
         <nav class="article-nav">
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover9.jpeg"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2023/09/19/%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E5%89%8D%E7%AB%AF%E8%84%9A%E6%89%8B%E6%9E%B6/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">从零打造前端脚手架 😈</h2>
+        </a>
+      
+      <div class="card-text--row">Newer</div>
+    </div>
+  </article>
+</div>
           
           
             <div class="article-nav-item layout-padding">
@@ -230,7 +249,7 @@
       <div id="valine_thread" class="valine-thread"></div>
     </div>
     <!-- id 将作为查询条件 -->
-    <div id="/2023/03/29/DIY%E5%B1%9E%E4%BA%8E%E8%87%AA%E5%B7%B1%E7%9A%84chatgpt%20web%E5%BA%94%E7%94%A8/" class="leancloud_visitors" data-flag-title="DIY属于自己的chatgpt web应用">
+    <div id="/2023/03/29/DIY%20Chatgpt%20Web%20%E5%BA%94%E7%94%A8/" class="leancloud_visitors" data-flag-title="DIY Chatgpt Web 应用">
       <em class="post-meta-item-text">阅读量 </em>
       <i class="leancloud-visitors-count">1000000</i>
     </div>
@@ -275,13 +294,13 @@
         <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
 </svg>
-        <span>13</span>
+        <span>14</span>
       </div>
       <div class="count-box--item">
         <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
   <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
 </svg>
-        4
+        5
       </div>
       <div class="count-box--item">
         <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
@@ -320,6 +339,12 @@
     <ul class="categorys-list">
       
         <li class="categorys-list-item">
+          <a href="/categories/AI/">
+            AI (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
           <a href="/categories/test/">
             test (1)
           </a>
@@ -333,7 +358,7 @@
       
         <li class="categorys-list-item">
           <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
-            前端工程化 (2)
+            前端工程化 (3)
           </a>
         </li>
       
