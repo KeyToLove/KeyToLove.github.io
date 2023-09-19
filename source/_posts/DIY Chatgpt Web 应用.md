@@ -1,7 +1,7 @@
 ---
-title: DIY属于自己的chatgpt web应用
+title: DIY Chatgpt Web 应用
 date: 2023-03-29 16:40:12
-tags:
+categories: AI
 cover: /images/cover5.jpeg
 ---
 
@@ -20,11 +20,11 @@ Demo 主要是使用了`OpenAI`的生成图片和对话的 API 接口，实现�
 
 - Home Page
 
-  ![首页](/images/chatgpt06.jpg)
+  ![首页](/images/chatgpt06.jpeg)
 
 - 示例-1: 根据描述生成图片 & 翻译
 
-  ![示例-1](/images/chatgpt02.jpg)
+  ![示例-1](/images/chatgpt02.jpeg)
 
 - 示例-2: 智能 AI 对话
 
@@ -66,7 +66,7 @@ npm create vite@latest <your_project_name> -- --template vue
 
 #### 前端路由
 
-本应用暂时只包含`Demo-1` `Demo-2`两个示例，所以并没有额外引入`vue-router`,而是直接通过监听 url hash 值的变化，用动态组件的方式渲染对应的示例
+~~本应用暂时只包含`Demo-1` `Demo-2`两个示例，所以并没有额外引入`vue-router`,而是直接通过监听 url hash 值的变化，用动态组件的方式渲染对应的示例~~
 
 ```js
 <template>
@@ -96,7 +96,10 @@ const go = (path: string) => {
   window.location.href = `#/${path}`
 }
 </script>
+
 ```
+
+现因为存在多个模块，考虑到拓展能力，采用 vue 官方 vue-router 来处理路由
 
 #### 服务端调用 OpenAI API
 
@@ -221,7 +224,9 @@ const addCopyButton = () => {
 
 #### 对话记录持久化
 
-每完成一次对话操作将对话内容持久化存储`localStorage`中，初始化的时候读取本地对话历史进行渲染，请求时携带对话上下文历史信息，这里有很多 Todo,例如不只是记录一条对话历史，像`chatgpt`记录近期完整的对话记录等
+每完成一次对话操作将对话内容持久化存储`localStorage`中，初始化的时候读取本地对话历史进行渲染，请求时携带对话上下文历史信息.
+~~这里有很多 Todo,例如不只是记录一条对话历史，像`chatgpt`记录近期完整的对话记录等~~
+目前已支持多回话历史记录功能，方便翻阅之前相关对话.
 
 ## 写在最后
 
