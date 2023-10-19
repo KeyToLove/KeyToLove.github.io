@@ -26,7 +26,7 @@
 
   
 
-  <title>【leetcode】5.最长回文子串 | KeyToLove Blog Space</title>
+  <title>【leetcode】7.整数反转 | KeyToLove Blog Space</title>
 
   
 
@@ -49,7 +49,7 @@
 <!-- header container -->
 <header class="header-container post">
   
-    <div class="post-image" style="background-image: url(/images/cover3.jpeg)"></div>
+    <div class="post-image" style="background-image: url(/images/cover7.webp)"></div>
   
 
   <!-- navbar -->
@@ -102,11 +102,11 @@
     <div class="header-content">
       <div class="post-text layout-block">
         <div class="layout-margin">
-          <h1 class="title-wrap">【leetcode】5.最长回文子串</h1>
+          <h1 class="title-wrap">【leetcode】7.整数反转</h1>
           <h2 class="title-sub-wrap">
             <strong>KeyToLove</strong>
             <span>发布于</span>
-            <time  class="article-date" datetime="2022-08-17T03:44:30.000Z" itemprop="datePublished">2022-08-17</time>
+            <time  class="article-date" datetime="2023-10-19T08:34:16.000Z" itemprop="datePublished">2023-10-19</time>
           </h2>
           <ul class="wrap-list dark">
   
@@ -142,13 +142,31 @@
         <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p style="font-size:16px">Leetcode 算法题是一个全新的文章系列，该系列将会抽选 <a target="_blank" rel="noopener" href="https://leetcode.cn/">Leetcode</a> 上题目记录解题思路以及总结等</p>
 <b style="font-size:14px;color:red">tips: 为节省文章篇幅，题目描述以及相关示例本系列文章中不再额外赘述，可以对照题目原链接查看</b>
 
-<p>本篇为 Leetcode 第 5 题-最长回文子串，题目链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/longest-palindromic-substring/">最长回文子串</a></p>
-<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><p>首先我们要了解<code>回文字符串</code>的特点 - 中心对称,即形如<code>aba</code> <code>abba</code>这样中心轴对称的字符串，根据题目要求，我们需要在所有回文字符串中找出最长的那一条即可</p>
-<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> &#123;<span class="hljs-type">string</span>&#125; <span class="hljs-variable">s</span></span><br><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> &#123;<span class="hljs-type">string</span>&#125;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">var</span> longestPalindrome = <span class="hljs-keyword">function</span> (<span class="hljs-params">s</span>) &#123;<br>  <span class="hljs-keyword">let</span> max = <span class="hljs-string">&#x27;&#x27;</span><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">helper</span> = (<span class="hljs-params">l, r</span>) =&gt; &#123;<br>    <span class="hljs-comment">// 不越界的同时 满足中心对称特点则外扩 直到已经不满足中心对称的特点</span><br>    <span class="hljs-keyword">while</span> (l &gt;= <span class="hljs-number">0</span> &amp;&amp; r &lt; s.<span class="hljs-property">length</span> &amp;&amp; s[l] === s[r]) &#123;<br>      l--<br>      r++<br>    &#125;<br>    <span class="hljs-comment">// 得到最后一次外扩前回文字符串</span><br>    <span class="hljs-keyword">const</span> str = s.<span class="hljs-title function_">slice</span>(l + <span class="hljs-number">1</span>, r)<br>    <span class="hljs-comment">// 比较当前回文长度和已记录最大回文长度</span><br>    max = str.<span class="hljs-property">length</span> &gt; max.<span class="hljs-property">length</span> ? str : max<br>  &#125;<br>  <span class="hljs-comment">// 结合回文字符串中心对成的特点，遍历字符串依次作为中心点进行计算</span><br>  <span class="hljs-keyword">for</span> (<span class="hljs-keyword">let</span> i = <span class="hljs-number">0</span>; i &lt; s.<span class="hljs-property">length</span>; i++) &#123;<br>    <span class="hljs-comment">// 回文为奇数的情况 例如 aba</span><br>    <span class="hljs-title function_">helper</span>(i, i)<br>    <span class="hljs-comment">// 回文为偶数的情况 例如 abba</span><br>    <span class="hljs-title function_">helper</span>(i, i + <span class="hljs-number">1</span>)<br>  &#125;<br>  <span class="hljs-keyword">return</span> max<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>本篇为 Leetcode 第 7 题-整数反转，题目链接：<a target="_blank" rel="noopener" href="https://leetcode.cn/problems/reverse-integer/description/">整数反转</a></p>
+<h2 id="题解"><a href="#题解" class="headerlink" title="题解"></a>题解</h2><ul>
+<li>题目描述很清晰，给到一个数字，将该数字进行反转后的值返回即可</li>
+<li>需要注意两个点：1. 保留数字符号 2. 依题意判断是否越界</li>
+</ul>
+<ol>
+<li>转字符串反转</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> &#123;<span class="hljs-type">number</span>&#125; <span class="hljs-variable">x</span></span><br><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> &#123;<span class="hljs-type">number</span>&#125;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">var</span> reverse = <span class="hljs-keyword">function</span> (<span class="hljs-params">x</span>) &#123;<br>  <span class="hljs-comment">// 记录符号</span><br>  <span class="hljs-keyword">const</span> flag = x &gt; <span class="hljs-number">0</span> ? <span class="hljs-number">1</span> : -<span class="hljs-number">1</span><br><br>  <span class="hljs-comment">// 移除符号进行字符串反转</span><br>  <span class="hljs-keyword">const</span> res = <span class="hljs-title class_">String</span>(<span class="hljs-title class_">Math</span>.<span class="hljs-title function_">abs</span>(x)).<span class="hljs-title function_">split</span>(<span class="hljs-string">&#x27;&#x27;</span>).<span class="hljs-title function_">reverse</span>().<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;&#x27;</span>)<br><br>  <span class="hljs-comment">// 判断边界并且补充原始符号</span><br>  <span class="hljs-keyword">return</span> res &gt; <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">pow</span>(<span class="hljs-number">2</span>, <span class="hljs-number">31</span>) - <span class="hljs-number">1</span> || res &lt; <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">pow</span>(-<span class="hljs-number">2</span>, <span class="hljs-number">31</span>) ? <span class="hljs-number">0</span> : flag * res<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>复杂度分析：</p>
 <ul>
-<li><p>时间复杂度：O（N ^ 2）N 字符串 s 的长度 （外层一次循环 内层 helper 函数执行两次，单次最多循环 N &#x2F; 2 次 ）</p>
+<li><p>时间复杂度：O（N）</p>
+</li>
+<li><p>空间复杂度：O(1)</p>
+</li>
+</ul>
+<ol start="2">
+<li>模 10 取余,反转数字</li>
+</ol>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * <span class="hljs-doctag">@param</span> &#123;<span class="hljs-type">number</span>&#125; <span class="hljs-variable">x</span></span><br><span class="hljs-comment"> * <span class="hljs-doctag">@return</span> &#123;<span class="hljs-type">number</span>&#125;</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">var</span> reverse = <span class="hljs-keyword">function</span> (<span class="hljs-params">x</span>) &#123;<br>  <span class="hljs-keyword">var</span> reverse = <span class="hljs-keyword">function</span> (<span class="hljs-params">x</span>) &#123;<br>    <span class="hljs-keyword">let</span> res = <span class="hljs-number">0</span><br>    <span class="hljs-keyword">while</span> (x !== <span class="hljs-number">0</span>) &#123;<br>      <span class="hljs-comment">// 左移一位，求模补在末位</span><br>      <span class="hljs-comment">// 求摸和Math.trunc都会保留符号，故不用处理符号问题</span><br>      res = res * <span class="hljs-number">10</span> + (x % <span class="hljs-number">10</span>)<br>      <span class="hljs-comment">// 移除末位</span><br>      x = <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">trunc</span>(x / <span class="hljs-number">10</span>)<br>    &#125;<br>    <span class="hljs-comment">// 判断边界</span><br>    <span class="hljs-keyword">return</span> res &gt; <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">pow</span>(<span class="hljs-number">2</span>, <span class="hljs-number">31</span>) - <span class="hljs-number">1</span> || res &lt; <span class="hljs-title class_">Math</span>.<span class="hljs-title function_">pow</span>(-<span class="hljs-number">2</span>, <span class="hljs-number">31</span>) ? <span class="hljs-number">0</span> : res<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>复杂度分析：</p>
+<ul>
+<li><p>时间复杂度：O（log|x|）,翻转的次数即 x 十进制的位数</p>
 </li>
 <li><p>空间复杂度：O(1)</p>
 </li>
@@ -160,32 +178,16 @@
       
         <nav class="article-nav">
           
-            <div class="article-nav-item layout-padding">
-  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
-    
-      <div class="card-cover" background-image-lazy data-img="/images/cover4.jpeg"></div>
-    
-    <div class="card-text">
-      
-        <a href="/2022/08/22/%E3%80%90leetcode%E3%80%916-Z%E5%AD%97%E5%BD%A2%E5%8F%98%E6%8D%A2/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">【leetcode】6.Z字形变换</h2>
-        </a>
-      
-      <div class="card-text--row">Newer</div>
-    </div>
-  </article>
-</div>
-          
           
             <div class="article-nav-item layout-padding">
   <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
     
-      <div class="card-cover" background-image-lazy data-img="/images/cover2.jpeg"></div>
+      <div class="card-cover" background-image-lazy data-img="/images/cover9.jpeg"></div>
     
     <div class="card-text">
       
-        <a href="/2022/08/02/%E3%80%90leetcode%E3%80%914-%E5%AF%BB%E6%89%BE%E4%B8%A4%E4%B8%AA%E6%AD%A3%E5%BA%8F%E6%95%B0%E7%BB%84%E7%9A%84%E4%B8%AD%E4%BD%8D%E6%95%B0/" itemprop="url">
-          <h2 class="card-text--title text-ellipsis">【leetcode】4.寻找两个正序数组的中位数</h2>
+        <a href="/2023/09/19/%E4%BB%8E%E9%9B%B6%E6%89%93%E9%80%A0%E5%89%8D%E7%AB%AF%E8%84%9A%E6%89%8B%E6%9E%B6/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">从零打造前端脚手架 😈</h2>
         </a>
       
       <div class="card-text--row">Older</div>
@@ -206,7 +208,7 @@
       <div id="valine_thread" class="valine-thread"></div>
     </div>
     <!-- id 将作为查询条件 -->
-    <div id="/2022/08/17/%E3%80%90leetcode%E3%80%915-%E6%9C%80%E9%95%BF%E5%9B%9E%E6%96%87%E5%AD%90%E4%B8%B2/" class="leancloud_visitors" data-flag-title="【leetcode】5.最长回文子串">
+    <div id="/2023/10/19/%E3%80%90leetcode%E3%80%917-%E6%95%B4%E6%95%B0%E5%8F%8D%E8%BD%AC/" class="leancloud_visitors" data-flag-title="【leetcode】7.整数反转">
       <em class="post-meta-item-text">阅读量 </em>
       <i class="leancloud-visitors-count">1000000</i>
     </div>
