@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <meta name="theme-color" content="#3367D6"/>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@docsearch/css@3"/></pre></li>
+  
+  <meta name="generator" content="Hexo 6.3.0">
+
+  
+    <meta name="description" content="KeyToLove Blog Space,KeyToLove 博客空间，记录技术 &amp; 生活 &amp; more">
+  
+
+  
+    <meta name="keywords" content="KeyToLove blog github Frent-End">
+  
+
+  
+    <meta name="author" content="KeyToLove">
+  
+
+  
+
+  
+
+  <title>React-dev-inspector源码分析 | KeyToLove Blog Space</title>
+
+  
+
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+
+  
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-source-code-pro@1.1.3/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlightjs@9.16.2/styles/monokai.css">
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+</head>
+<body>
+  <div class="root-container">
+    
+<!-- header container -->
+<header class="header-container post">
+  
+    <div class="post-image" style="background-image: url(/images/banner.jpeg)"></div>
+  
+
+  <!-- navbar -->
+<nav class="navbar">
+  <div class="navbar-content">
+    <!-- logo -->
+    <div class="navbar-logo">
+      <a href="/">
+        
+          KeyToLove Blog Space
+        
+      </a>
+    </div>
+    <!-- link -->
+    <div class="navbar-link">
+      <!-- search -->
+    <div id="doc-search"></div>
+      <div class="navbar-btn">
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+      <ul class="navbar-list">
+        
+          <li class="navbar-list-item"><a href="/">首页</a></li>
+        
+          <li class="navbar-list-item"><a href="/links">友链</a></li>
+        
+          <li class="navbar-list-item"><a href="/about">关于</a></li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+
+  
+  
+    <div class="header-content">
+      <div class="post-text layout-block">
+        <div class="layout-margin">
+          <h1 class="title-wrap">React-dev-inspector源码分析</h1>
+          <h2 class="title-sub-wrap">
+            <strong>KeyToLove</strong>
+            <span>发布于</span>
+            <time  class="article-date" datetime="2024-01-09T07:23:03.000Z" itemprop="datePublished">2024-01-09</time>
+          </h2>
+          <ul class="wrap-list dark">
+  
+    <li><a href="/categories/%E6%BA%90%E7%A0%81/">📒 源码</a></li>
+  
+</ul>
+          <ul class="wrap-list dark">
+  
+    <li><a href="/tags/React/">🏷️ React</a></li>
+  
+    <li><a href="/tags/DX/">🏷️ DX</a></li>
+  
+</ul>
+        </div>
+      </div>
+    </div>
+  
+
+  
+  
+  
+</header>
+
+    <!-- 文章 -->
+
+<!-- 文章内容 -->
+<div class="body-container">
+  <article class="content-container layout-block post-container">
+    <div class="article-info">
+      
+      
+      
+      
+      <section class="article-entry markdown-body layout-margin content-padding--large soft-size--large soft-style--box">
+        <h1 id="React-dev-inspector-源码分析"><a href="#React-dev-inspector-源码分析" class="headerlink" title="React-dev-inspector 源码分析"></a>React-dev-inspector 源码分析</h1><p>::: tip<br>以下部分源码逻辑作了简化处理，主要关注整体的实现，忽略 Edge case<br>:::</p>
+<h2 id="使用方式"><a href="#使用方式" class="headerlink" title="使用方式"></a>使用方式</h2><ul>
+<li>入口配置</li>
+</ul>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-comment">// index.js</span><br><span class="hljs-keyword">import</span> &#123; <span class="hljs-title class_">Inspector</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-dev-inspector&#x27;</span><br><br><span class="hljs-keyword">const</span> <span class="hljs-title class_">WrapComponent</span> =<br>  process.<span class="hljs-property">env</span>.<span class="hljs-property">NODE_ENV</span> === <span class="hljs-string">&#x27;development&#x27;</span> ? <span class="hljs-title class_">Inspector</span> : <span class="hljs-title class_">Fragment</span><br><br>  &lt;<span class="hljs-title class_">WrapComponent</span> keys=&#123;[<span class="hljs-string">&quot;control&quot;</span>, <span class="hljs-string">&quot;shift&quot;</span>, <span class="hljs-string">&quot;alt&quot;</span>, <span class="hljs-string">&quot;f&quot;</span>]&#125;&gt;<br>    <span class="language-xml"><span class="hljs-tag">&lt;<span class="hljs-name">App</span> /&gt;</span></span><br>  &lt;/<span class="hljs-title class_">WrapComponent</span>&gt;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>babel 配置</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// .babelrc.js</span><br><span class="hljs-variable language_">module</span>.<span class="hljs-property">exports</span> = &#123;<br>  <span class="hljs-attr">plugins</span>: [<br>    <span class="hljs-string">&#x27;react-dev-inspector/plugins/babel&#x27;</span>,<br>    <span class="hljs-comment">// more</span><br>  ],<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ul>
+<li>webpack 配置</li>
+</ul>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// webpack config</span><br><span class="hljs-keyword">import</span> type &#123; <span class="hljs-title class_">Configuration</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;webpack&#x27;</span><br><span class="hljs-keyword">import</span> &#123; launchEditorMiddleware &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-dev-inspector/plugins/webpack&#x27;</span><br><br><span class="hljs-keyword">const</span> <span class="hljs-attr">config</span>: <span class="hljs-title class_">Configuration</span> = &#123;<br>  <span class="hljs-attr">devServer</span>: &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * react-dev-inspector - dev server config</span><br><span class="hljs-comment">     * for create-react-app@^5 + webpack-dev-server@^4.7</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-attr">setupMiddlewares</span>: <span class="hljs-function">(<span class="hljs-params">middlewares, devServer</span>) =&gt;</span> &#123;<br>      middlewares.<span class="hljs-title function_">unshift</span>(launchEditorMiddleware)<br>      <span class="hljs-keyword">return</span> middlewares<br>    &#125;,<br><br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * react-dev-inspector - dev server config</span><br><span class="hljs-comment">     * for create-react-app@^4 + webpack-dev-server@^3</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-attr">before</span>: <span class="hljs-function">(<span class="hljs-params">app, server, compiler</span>) =&gt;</span> &#123;<br>      app.<span class="hljs-title function_">use</span>(launchEditorMiddleware)<br><br>      <span class="hljs-comment">// ... other middlewares after</span><br>    &#125;,<br>  &#125;,<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="编译时"><a href="#编译时" class="headerlink" title="编译时"></a>编译时</h2><p><code>react-dev-inspector/plugins/babel </code>,拿到未编译的<code>tsx</code>源码，遍历 <code>AST</code>节点，给其中的<code>DOM</code>节点上添加源码位置信息: <code>line</code>、<code>column</code>、<code>relative path</code></p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">import</span> &#123;<br>  jsxAttribute,<br>  jsxIdentifier,<br>  stringLiteral,<br>&#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@babel/types/lib/builders/generated&#x27;</span><br><span class="hljs-keyword">const</span> <span class="hljs-attr">doJSXOpeningElement</span>: <span class="hljs-title class_">NodeHandler</span>&lt;<br>  <span class="hljs-title class_">JSXOpeningElement</span>,<br>  &#123; <span class="hljs-attr">relativePath</span>: <span class="hljs-built_in">string</span> &#125;<br>&gt; = <span class="hljs-function">(<span class="hljs-params">node, option</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> &#123; stop &#125; = <span class="hljs-title function_">doJSXPathName</span>(node.<span class="hljs-property">name</span>)<br>  <span class="hljs-keyword">if</span> (stop) <span class="hljs-keyword">return</span> &#123; stop &#125;<br><br>  <span class="hljs-keyword">const</span> &#123; relativePath &#125; = option<br>  <span class="hljs-keyword">const</span> line = node.<span class="hljs-property">loc</span>?.<span class="hljs-property">start</span>.<span class="hljs-property">line</span><br>  <span class="hljs-keyword">const</span> column = node.<span class="hljs-property">loc</span>?.<span class="hljs-property">start</span>.<span class="hljs-property">column</span><br><br>  <span class="hljs-keyword">const</span> <span class="hljs-attr">lineAttr</span>: <span class="hljs-title class_">JSXAttribute</span> | <span class="hljs-literal">null</span> = <span class="hljs-title function_">isNil</span>(line)<br>    ? <span class="hljs-literal">null</span><br>    : <span class="hljs-title function_">jsxAttribute</span>(<br>        <span class="hljs-title function_">jsxIdentifier</span>(<span class="hljs-string">&#x27;data-inspector-line&#x27;</span>),<br>        <span class="hljs-title function_">stringLiteral</span>(line.<span class="hljs-title function_">toString</span>())<br>      )<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-attr">columnAttr</span>: <span class="hljs-title class_">JSXAttribute</span> | <span class="hljs-literal">null</span> = <span class="hljs-title function_">isNil</span>(column)<br>    ? <span class="hljs-literal">null</span><br>    : <span class="hljs-title function_">jsxAttribute</span>(<br>        <span class="hljs-title function_">jsxIdentifier</span>(<span class="hljs-string">&#x27;data-inspector-column&#x27;</span>),<br>        <span class="hljs-title function_">stringLiteral</span>(column.<span class="hljs-title function_">toString</span>())<br>      )<br><br>  <span class="hljs-keyword">const</span> <span class="hljs-attr">relativePathAttr</span>: <span class="hljs-title class_">JSXAttribute</span> = <span class="hljs-title function_">jsxAttribute</span>(<br>    <span class="hljs-title function_">jsxIdentifier</span>(<span class="hljs-string">&#x27;data-inspector-relative-path&#x27;</span>),<br>    <span class="hljs-title function_">stringLiteral</span>(relativePath)<br>  )<br><br>  <span class="hljs-keyword">const</span> attributes = [lineAttr, columnAttr, relativePathAttr] <span class="hljs-keyword">as</span> <span class="hljs-title class_">JSXAttribute</span>[]<br><br>  <span class="hljs-comment">// Make sure that there are exist together</span><br>  <span class="hljs-keyword">if</span> (attributes.<span class="hljs-title function_">every</span>(<span class="hljs-title class_">Boolean</span>)) &#123;<br>    node.<span class="hljs-property">attributes</span>.<span class="hljs-title function_">unshift</span>(...attributes)<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> &#123; <span class="hljs-attr">result</span>: node &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="运行时"><a href="#运行时" class="headerlink" title="运行时"></a>运行时</h2><h3 id="Inspector-容器组件"><a href="#Inspector-容器组件" class="headerlink" title="Inspector 容器组件"></a>Inspector 容器组件</h3><h4 id="键盘事件监听"><a href="#键盘事件监听" class="headerlink" title="键盘事件监听"></a>键盘事件监听</h4><p>使用 <a target="_blank" rel="noopener" href="https://github.com/jaywcjlove/hotkeys">hotkeys-js</a> 绑定键盘事件，用来快捷键唤起元素检视或关闭检视</p>
+<figure class="highlight tsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs tsx"><span class="hljs-comment">// 默认唤起热键</span><br><span class="hljs-keyword">const</span> defaultHotKeys = [<span class="hljs-string">&#x27;control&#x27;</span>, <span class="hljs-string">&#x27;shift&#x27;</span>, <span class="hljs-string">&#x27;command&#x27;</span>, <span class="hljs-string">&#x27;c&#x27;</span>]<br><br><span class="hljs-keyword">const</span> keys = props.<span class="hljs-property">keys</span><br><br><span class="hljs-comment">// 处理成 hotkeys-js 需要的string格式</span><br><span class="hljs-keyword">const</span> hotkey = keys ? keys.<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;+&#x27;</span>) : defaultHotKeys.<span class="hljs-title function_">join</span>(<span class="hljs-string">&#x27;+&#x27;</span>)<br><br><span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-comment">// 监听指定快捷键和esc，根据状态 stopInspect / startInspect</span><br>  <span class="hljs-keyword">const</span> <span class="hljs-title function_">handleHotKeys</span> = (<span class="hljs-params">event, handler</span>) =&gt; &#123;<br>    <span class="hljs-keyword">if</span> (handler.<span class="hljs-property">key</span> === hotkey) &#123;<br>      overlayRef.<span class="hljs-property">current</span> ? <span class="hljs-title function_">stopInspect</span>() : <span class="hljs-title function_">startInspect</span>()<br>    &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (handler.<span class="hljs-property">key</span> === <span class="hljs-string">&#x27;esc&#x27;</span> &amp;&amp; overlayRef.<span class="hljs-property">current</span>) &#123;<br>      <span class="hljs-title function_">stopInspect</span>()<br>    &#125;<br>  &#125;<br><br>  <span class="hljs-title function_">hotkeys</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;hotkey&#125;</span>, esc`</span>, handleHotKeys)<br><br>  <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-comment">// 移除键盘事件监听</span><br>    hotkeys.<span class="hljs-title function_">unbind</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;hotkey&#125;</span>, esc`</span>, handleHotKeys)<br>    <span class="hljs-keyword">delete</span> <span class="hljs-variable language_">window</span>.<span class="hljs-property">__REACT_DEV_INSPECTOR_TOGGLE__</span><br>  &#125;<br>&#125;, [hotkey])<br></code></pre></td></tr></table></figure>
+
+<h4 id="mousemove-事件监听"><a href="#mousemove-事件监听" class="headerlink" title="mousemove 事件监听"></a>mousemove 事件监听</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-comment">// 维护鼠标指针 clientX , clientY</span><br><span class="hljs-keyword">const</span> mousePointRef = <span class="hljs-title function_">useRef</span>(&#123; <span class="hljs-attr">x</span>: <span class="hljs-number">0</span>, <span class="hljs-attr">y</span>: <span class="hljs-number">0</span> &#125;)<br><span class="hljs-keyword">const</span> <span class="hljs-title function_">recordMousePoint</span> = (<span class="hljs-params">&#123; clientX, clientY &#125;</span>) =&gt; &#123;<br>  mousePointRef.<span class="hljs-property">current</span>.<span class="hljs-property">x</span> = clientX<br>  mousePointRef.<span class="hljs-property">current</span>.<span class="hljs-property">y</span> = clientY<br>&#125;<br><br><span class="hljs-title function_">useEffect</span>(<span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">addEventListener</span>(<span class="hljs-string">&#x27;mousemove&#x27;</span>, recordMousePoint, <span class="hljs-literal">true</span>)<br>  <span class="hljs-keyword">return</span> <span class="hljs-function">() =&gt;</span> &#123;<br>    <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">removeEventListener</span>(<span class="hljs-string">&#x27;mousemove&#x27;</span>, recordMousePoint, <span class="hljs-literal">true</span>)<br>  &#125;<br>&#125;, [])<br></code></pre></td></tr></table></figure>
+
+<h4 id="startInspect"><a href="#startInspect" class="headerlink" title="startInspect"></a>startInspect</h4><figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs js"><span class="hljs-keyword">const</span> overlayRef = <span class="hljs-title function_">useRef</span>()<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">startInspect</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  <span class="hljs-comment">// 初始化 Overlay 层</span><br>  <span class="hljs-keyword">const</span> overlay = <span class="hljs-keyword">new</span> <span class="hljs-title class_">Overlay</span>()<br><br>  <span class="hljs-comment">// 持久维护到ref中</span><br>  overlayRef.<span class="hljs-property">current</span> = overlay<br><br>  <span class="hljs-comment">// more... 注册相应回调</span><br>&#125;<br><br><span class="hljs-keyword">const</span> <span class="hljs-title function_">stopInspect</span> = (<span class="hljs-params"></span>) =&gt; &#123;<br>  overlay.<span class="hljs-property">current</span>?.<span class="hljs-title function_">remove</span>()<br>  overlay.<span class="hljs-property">current</span> = <span class="hljs-literal">null</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h4 id="获取悬停-dom-元素信息"><a href="#获取悬停-dom-元素信息" class="headerlink" title="获取悬停 dom 元素信息"></a>获取悬停 dom 元素信息</h4><p>根据之前监听 mousemove 事件记录的鼠标 <code>clientX</code>、<code>clientY</code> 获得鼠标悬停处最上层元素</p>
+<blockquote>
+<p>DocumentOrShadowRoot 接口的 elementFromPoint() 方法返回给定坐标点下最上层的 element 元素。</p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> initPoint = mousePointRef.<span class="hljs-property">current</span><br><span class="hljs-keyword">const</span> initElement = <span class="hljs-variable language_">document</span>.<span class="hljs-title function_">elementFromPoint</span>(initPoint.<span class="hljs-property">x</span>, initPoint.<span class="hljs-property">y</span>)<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Element.getBoundingClientRect() 方法返回一个 DOMRect 对象，其提供了元素的大小及其相对于视口的位置。</p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> rect = initElement.<span class="hljs-title function_">getBoundingClientRect</span>()<br><br><span class="hljs-comment">// 这里得到元素位置信息</span><br><span class="hljs-keyword">const</span> &#123; left, top &#125; = rect<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>Window.getComputedStyle()方法返回一个对象，该对象在应用活动样式表并解析这些值可能包含的任何基本计算后报告元素的所有 CSS 属性的值。</p>
+</blockquote>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// 获取元素样式信息</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">function</span> <span class="hljs-title function_">getElementDimensions</span>(<span class="hljs-params">domElement: Element</span>) &#123;<br>  <span class="hljs-keyword">const</span> calculatedStyle = <span class="hljs-variable language_">window</span>.<span class="hljs-title function_">getComputedStyle</span>(domElement)<br>  <span class="hljs-keyword">return</span> &#123;<br>    <span class="hljs-attr">borderLeft</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">borderLeftWidth</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">borderRight</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">borderRightWidth</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">borderTop</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">borderTopWidth</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">borderBottom</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">borderBottomWidth</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">marginLeft</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">marginLeft</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">marginRight</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">marginRight</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">marginTop</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">marginTop</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">marginBottom</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">marginBottom</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">paddingLeft</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">paddingLeft</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">paddingRight</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">paddingRight</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">paddingTop</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">paddingTop</span>, <span class="hljs-number">10</span>),<br>    <span class="hljs-attr">paddingBottom</span>: <span class="hljs-built_in">parseInt</span>(calculatedStyle.<span class="hljs-property">paddingBottom</span>, <span class="hljs-number">10</span>),<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>由此可以得到 dom 元素的盒模型信息<br><img src="/../images/%E7%9B%92%E6%A8%A1%E5%9E%8B.png" alt="盒模型"><br>绘制的 overlay 层<br><img src="/./images/overlay.png" alt="overlay"></p>
+<h4 id="获取组件名称"><a href="#获取组件名称" class="headerlink" title="获取组件名称"></a>获取组件名称</h4><p>React 内部会在 DOM 上反向的挂上它所对应的 <code>fiber node</code> 的引用</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * https://stackoverflow.com/questions/29321742/react-getting-a-component-from-a-dom-element-for-debugging</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> getElementFiber = (<span class="hljs-attr">element</span>: <span class="hljs-title class_">HTMLElement</span>): <span class="hljs-title class_">Fiber</span> | <span class="hljs-function"><span class="hljs-params">null</span> =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> fiberKey = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">keys</span>(element).<span class="hljs-title function_">find</span>(<span class="hljs-function"><span class="hljs-params">key</span> =&gt;</span><br>    key.<span class="hljs-title function_">startsWith</span>(<span class="hljs-string">&#x27;__reactInternalInstance$&#x27;</span>)<br>  )<br><br>  <span class="hljs-keyword">if</span> (fiberKey) &#123;<br>    <span class="hljs-keyword">return</span> element[fiberKey] <span class="hljs-keyword">as</span> <span class="hljs-title class_">Fiber</span><br>  &#125;<br><br>  <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>fiber</code> 是一个链表结构，递归查找 <code>fiber</code> 的 <code>return</code>，直到查找到最近的<code>组件节点</code>后作为展示的名字</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// 这里用正则屏蔽了一些组件名 这些正则匹配到的组件名不会被检测到</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> debugToolNameRegex =<br>  <span class="hljs-regexp">/^(.*?\.Provider|.*?\.Consumer|Anonymous|Trigger|Tooltip|_.*|[a-z].*)$/</span><br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> getSuitableFiber = (baseFiber?: <span class="hljs-title class_">Fiber</span>): <span class="hljs-title class_">Fiber</span> | <span class="hljs-function"><span class="hljs-params">null</span> =&gt;</span> &#123;<br>  <span class="hljs-keyword">let</span> fiber = baseFiber<br><br>  <span class="hljs-keyword">while</span> (fiber) &#123;<br>    <span class="hljs-comment">// while 循环向上递归查找 displayName / name 符合的组件</span><br>    <span class="hljs-keyword">const</span> name = fiber.<span class="hljs-property">type</span>?.<span class="hljs-property">displayName</span> ?? fiber.<span class="hljs-property">type</span>?.<span class="hljs-property">name</span><br>    <span class="hljs-keyword">if</span> (name &amp;&amp; !debugToolNameRegex.<span class="hljs-title function_">test</span>(name)) &#123;<br>      <span class="hljs-keyword">return</span> fiber<br>    &#125;<br>    <span class="hljs-comment">// 找不到的话 就继续找 return 节点</span><br>    fiber = fiber.<span class="hljs-property">return</span><br>  &#125;<br><br>  <span class="hljs-keyword">return</span> <span class="hljs-literal">null</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p><code>fiber</code> 上的属性 <code>type</code> 在函数式组件的情况下对应你书写的函数，在 class 组件的情况下就对应那个类，取上面的的 <code>displayName</code> 或 <code>name</code> 属性即可</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> getFiberName = (fiber?: <span class="hljs-title class_">Fiber</span>): <span class="hljs-built_in">string</span> | <span class="hljs-function"><span class="hljs-params">undefined</span> =&gt;</span> &#123;<br>  <span class="hljs-keyword">const</span> fiberType = <span class="hljs-title function_">getSuitableFiber</span>(fiber)?.<span class="hljs-property">type</span><br>  <span class="hljs-keyword">let</span> <span class="hljs-attr">displayName</span>: <span class="hljs-built_in">string</span> | <span class="hljs-literal">undefined</span><br><br>  <span class="hljs-comment">// The displayName property is not guaranteed to be a string.</span><br>  <span class="hljs-comment">// It&#x27;s only safe to use for our purposes if it&#x27;s a string.</span><br>  <span class="hljs-comment">// github.com/facebook/react-devtools/issues/803</span><br>  <span class="hljs-comment">//</span><br>  <span class="hljs-comment">// https://github.com/facebook/react/blob/v17.0.0/packages/react-devtools-shared/src/utils.js#L90-L112</span><br>  <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> fiberType?.<span class="hljs-property">displayName</span> === <span class="hljs-string">&#x27;string&#x27;</span>) &#123;<br>    displayName = fiberType.<span class="hljs-property">displayName</span><br>  &#125; <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> fiberType?.<span class="hljs-property">name</span> === <span class="hljs-string">&#x27;string&#x27;</span>) &#123;<br>    displayName = fiberType.<span class="hljs-property">name</span><br>  &#125;<br><br>  <span class="hljs-keyword">return</span> displayName<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="唤醒编辑器"><a href="#唤醒编辑器" class="headerlink" title="唤醒编辑器"></a>唤醒编辑器</h3><p>本地项目<code>dev</code>模式都是开发工具帮我们起了一个<code>devServer</code>,这个<code>devServer</code>本质上就是一个<code>node</code>服务，这里是利用了<code>node</code>服务中间件的特性，在指定的时机注入对应的中间件来实现打开编辑器的功能</p>
+<p>源码直接使用了<code>react-dev-utils</code>提供的能力</p>
+<p><code>Inspector</code>组件</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// src/Inspector/utils/inspect.ts</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-title function_">gotoEditor</span> = source =&gt; &#123;<br>  <span class="hljs-keyword">if</span> (!source) <span class="hljs-keyword">return</span><br>  <span class="hljs-keyword">const</span> &#123; lineNumber, columnNumber, relativePath, absolutePath &#125; = source<br>  <span class="hljs-keyword">const</span> isRelative = <span class="hljs-title class_">Boolean</span>(relativePath)<br>  <span class="hljs-keyword">const</span> launchParams = &#123;<br>    <span class="hljs-attr">fileName</span>: isRelative ? relativePath : absolutePath,<br>    lineNumber,<br>    <span class="hljs-attr">colNumber</span>: columnNumber,<br>  &#125;<br>  <span class="hljs-comment">/**</span><br><span class="hljs-comment">   * api in &#x27;react-dev-inspector/plugins/webpack/middlewares&#x27; launchEditorMiddleware</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-keyword">const</span> apiRoute = isRelative<br>    ? <span class="hljs-string">`<span class="hljs-subst">$&#123;launchEditorEndpoint&#125;</span>/relative`</span><br>    : launchEditorEndpoint<br>  <span class="hljs-title function_">fetch</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;apiRoute&#125;</span>?<span class="hljs-subst">$&#123;queryString.stringify(launchParams)&#125;</span>`</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// src/plugins/webpack/middlewares.ts</span><br><span class="hljs-keyword">import</span> path <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;path&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> &#123; <span class="hljs-title class_">NextHandleFunction</span>, <span class="hljs-title class_">IncomingMessage</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;connect&#x27;</span><br><span class="hljs-keyword">import</span> <span class="hljs-keyword">type</span> &#123; <span class="hljs-title class_">RequestHandler</span> &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;express&#x27;</span><br><span class="hljs-keyword">import</span> createReactLaunchEditorMiddleware <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-dev-utils/errorOverlayMiddleware&#x27;</span><br><span class="hljs-keyword">import</span> launchEditorEndpoint <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-dev-utils/launchEditorEndpoint&#x27;</span><br><br><span class="hljs-keyword">const</span> <span class="hljs-attr">reactLaunchEditorMiddleware</span>: <span class="hljs-title class_">RequestHandler</span> =<br>  <span class="hljs-title function_">createReactLaunchEditorMiddleware</span>()<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-attr">queryParserMiddleware</span>: <span class="hljs-title class_">NextHandleFunction</span> = <span class="hljs-function">(<span class="hljs-params"></span></span><br><span class="hljs-params"><span class="hljs-function">  req: IncomingMessage &amp; &#123; query?: <span class="hljs-built_in">Object</span> &#125;,</span></span><br><span class="hljs-params"><span class="hljs-function">  res,</span></span><br><span class="hljs-params"><span class="hljs-function">  next</span></span><br><span class="hljs-params"><span class="hljs-function"></span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">if</span> (!req.<span class="hljs-property">query</span> &amp;&amp; req.<span class="hljs-property">url</span>) &#123;<br>    <span class="hljs-keyword">const</span> url = <span class="hljs-keyword">new</span> <span class="hljs-title function_">URL</span>(req.<span class="hljs-property">url</span>, <span class="hljs-string">&#x27;https://placeholder.domain&#x27;</span>)<br>    req.<span class="hljs-property">query</span> = <span class="hljs-title class_">Object</span>.<span class="hljs-title function_">fromEntries</span>(url.<span class="hljs-property">searchParams</span>.<span class="hljs-title function_">entries</span>())<br>  &#125;<br>  <span class="hljs-title function_">next</span>()<br>&#125;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-attr">launchEditorMiddleware</span>: <span class="hljs-title class_">RequestHandler</span> = <span class="hljs-function">(<span class="hljs-params">req, res, next</span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">if</span> (req.<span class="hljs-property">url</span>.<span class="hljs-title function_">startsWith</span>(launchEditorEndpoint)) &#123;<br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * retain origin endpoint for backward compatibility &lt;= v1.2.0</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">if</span> (<br>      <span class="hljs-comment">// relative route used in `Inspector.tsx` `gotoEditor()`</span><br>      req.<span class="hljs-property">url</span>.<span class="hljs-title function_">startsWith</span>(<span class="hljs-string">`<span class="hljs-subst">$&#123;launchEditorEndpoint&#125;</span>/relative`</span>) &amp;&amp;<br>      <span class="hljs-keyword">typeof</span> req.<span class="hljs-property">query</span>.<span class="hljs-property">fileName</span> === <span class="hljs-string">&#x27;string&#x27;</span><br>    ) &#123;<br>      req.<span class="hljs-property">query</span>.<span class="hljs-property">fileName</span> = path.<span class="hljs-title function_">join</span>(process.<span class="hljs-title function_">cwd</span>(), req.<span class="hljs-property">query</span>.<span class="hljs-property">fileName</span>)<br>    &#125;<br><br>    <span class="hljs-title function_">reactLaunchEditorMiddleware</span>(req, res, next)<br>  &#125; <span class="hljs-keyword">else</span> &#123;<br>    <span class="hljs-title function_">next</span>()<br>  &#125;<br>&#125;<br><br><span class="hljs-comment">/**</span><br><span class="hljs-comment"> * retain create method for backward compatibility &lt;= v1.2.0</span><br><span class="hljs-comment"> */</span><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">const</span> <span class="hljs-attr">createLaunchEditorMiddleware</span>: <span class="hljs-function">() =&gt;</span> <span class="hljs-title class_">RequestHandler</span> = <span class="hljs-function">() =&gt;</span><br>  launchEditorMiddleware<br></code></pre></td></tr></table></figure>
+
+<h2 id="一些小细节"><a href="#一些小细节" class="headerlink" title="一些小细节"></a>一些小细节</h2><h3 id="使用pointerover替代mousemove事件来触发更新回调"><a href="#使用pointerover替代mousemove事件来触发更新回调" class="headerlink" title="使用pointerover替代mousemove事件来触发更新回调"></a>使用<code>pointerover</code>替代<code>mousemove</code>事件来触发更新回调</h3><p><code>pointerover</code> 和 <code>mousemove</code> 事件都是鼠标移动相关的事件，但它们有以下区别：</p>
+<ul>
+<li>触发方式不同：<code>mousemove</code> 事件在鼠标在元素内移动时连续触发，而 <code>pointerover</code> 事件在鼠标进入元素时才会触发一次。</li>
+<li>支持的设备不同：mousemove 事件只支持鼠标设备，而 <code>pointerover</code> 事件支持多种设备，包括鼠标、触摸屏、手写笔等。</li>
+<li>事件对象不同：<code>mousemove</code> 事件的事件对象是 <code>MouseEvent</code>，而 <code>pointerover</code> 事件的事件对象是 <code>PointerEvent</code>，它包含了更多关于指针设备的信息。</li>
+</ul>
+<p>使用场景：</p>
+<p><code>mousemove</code> 事件通常用于实现一些鼠标交互效果，例如拖拽、画图等。它也可以用于实现一些特殊的效果，例如鼠标悬浮在某个元素上时改变该元素的背景色或边框样式。<br>pointerover 事件通常用于改变鼠标指针的样式或显示元素的信息。例如，在一个链接上移动鼠标时，可以将鼠标指针的样式设置为手型，以提示用户该元素可以被点击。<code>pointerover</code> 事件也可以用于实现一些交互效果，例如在鼠标移动到某个元素上时显示一个弹出框或悬浮菜单等</p>
+<h3 id="如何确定用户使用的编辑器"><a href="#如何确定用户使用的编辑器" class="headerlink" title="如何确定用户使用的编辑器"></a>如何确定用户使用的编辑器</h3><p>巧妙实现各平台&#x2F;编辑器的兼容</p>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-comment">// https://github.com/facebook/create-react-app/blob/main/packages/react-dev-utils/launchEditor.js</span><br><span class="hljs-keyword">const</span> <span class="hljs-variable constant_">COMMON_EDITORS_OSX</span> = &#123;<br>  <span class="hljs-string">&#x27;/Applications/Visual Studio Code.app/Contents/MacOS/Electron&#x27;</span>: <span class="hljs-string">&#x27;code&#x27;</span>,<br>  <span class="hljs-string">&#x27;/Applications/Visual Studio Code - Insiders.app/Contents/MacOS/Electron&#x27;</span>:<br>    <span class="hljs-string">&#x27;code-insiders&#x27;</span>,<br>  <span class="hljs-comment">// more ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="设计上提供更高的自由度"><a href="#设计上提供更高的自由度" class="headerlink" title="设计上提供更高的自由度"></a>设计上提供更高的自由度</h3><p>开发者可以轻松的“侵入”到插件内部来拓展或是自定义额外的功能</p>
+<p>checkout TS definition under <a target="_blank" rel="noopener" href="https://github.com/zthxxx/react-dev-inspector/blob/master/src/Inspector/Inspector.tsx#L29"><code>react-dev-inspector/es/Inspector.d.ts</code></a>.</p>
+<table>
+<thead>
+<tr>
+<th>Property</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>keys</td>
+<td>inspector hotkeys<br /><br />supported keys see: <a target="_blank" rel="noopener" href="https://github.com/jaywcjlove/hotkeys#supported-keys">https://github.com/jaywcjlove/hotkeys#supported-keys</a></td>
+<td><code>string[]</code></td>
+<td><code>[&#39;control&#39;, &#39;shift&#39;, &#39;command&#39;, &#39;c&#39;]</code></td>
+</tr>
+<tr>
+<td>disableLaunchEditor</td>
+<td>disable editor launching<br /><br />(launch by default in dev Mode, but not in production mode)</td>
+<td><code>boolean</code></td>
+<td><code>false</code></td>
+</tr>
+<tr>
+<td>onHoverElement</td>
+<td>triggered when mouse hover in inspector mode</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/zthxxx/react-dev-inspector/blob/master/src/Inspector/Inspector.tsx#L14"><code>(params: InspectParams) =&gt; void</code></a></td>
+<td>-</td>
+</tr>
+<tr>
+<td>onClickElement</td>
+<td>triggered when mouse hover in inspector mode</td>
+<td><a target="_blank" rel="noopener" href="https://github.com/zthxxx/react-dev-inspector/blob/master/src/Inspector/Inspector.tsx#L14"><code>(params: InspectParams) =&gt; void</code></a></td>
+<td>-</td>
+</tr>
+</tbody></table>
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> <span class="hljs-title function_">handleHoverElement</span> = (<span class="hljs-params">element: HTMLElement</span>) =&gt; &#123;<br>  <span class="hljs-comment">// 忽略其余部分</span><br>  onHoverElement?.(&#123;<br>    element,<br>    fiber,<br>    codeInfo,<br>    name,<br>  &#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight ts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs ts"><span class="hljs-keyword">const</span> <span class="hljs-title function_">handleClickElement</span> = (<span class="hljs-params">element: HTMLElement</span>) =&gt; &#123;<br>  <span class="hljs-comment">// 忽略其余部分</span><br>  <span class="hljs-keyword">if</span> (!disableLaunchEditor) <span class="hljs-title function_">gotoEditor</span>(codeInfo)<br>  onClickElement?.(&#123;<br>    element,<br>    fiber,<br>    codeInfo,<br>    name,<br>  &#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="相关链接-🔗"><a href="#相关链接-🔗" class="headerlink" title="相关链接 🔗"></a>相关链接 🔗</h3><p><a target="_blank" rel="noopener" href="https://github.com/zthxxx/react-dev-inspector">react-dev-inspector 源码</a></p>
+<p><a target="_blank" rel="noopener" href="https://react-dev-inspector.zthxxx.me/showcase">在线示例</a></p>
+
+      </section>
+
+      
+      
+        <nav class="article-nav">
+          
+          
+            <div class="article-nav-item layout-padding">
+  <article class="card-container article-nav-card content-padding--primary soft-size--large soft-style--box">
+    
+      <div class="card-cover" background-image-lazy data-img="/images/cover7.webp"></div>
+    
+    <div class="card-text">
+      
+        <a href="/2023/10/19/%E3%80%90leetcode%E3%80%917-%E6%95%B4%E6%95%B0%E5%8F%8D%E8%BD%AC/" itemprop="url">
+          <h2 class="card-text--title text-ellipsis">【leetcode】7.整数反转</h2>
+        </a>
+      
+      <div class="card-text--row">Older</div>
+    </div>
+  </article>
+</div>
+          
+        </nav>
+      
+
+      <section class="page-message-container layout-padding">
+        
+
+
+  
+  
+    <div class="valine-container comments-container content-padding--primary soft-size--large soft-style--box">
+      <div id="valine_thread" class="valine-thread"></div>
+    </div>
+    <!-- id 将作为查询条件 -->
+    <div id="/2024/01/09/React-dev-inspector%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/" class="leancloud_visitors" data-flag-title="React-dev-inspector源码分析">
+      <em class="post-meta-item-text">阅读量 </em>
+      <i class="leancloud-visitors-count">1000000</i>
+    </div>
+    <script type="text/javascript" src="https://unpkg.com/leancloud-storage@3.15.0/dist/av-min.js"></script>
+    <script type="text/javascript" src='//unpkg.com/valine/dist/Valine.min.js'></script>
+    <script type="text/javascript">
+      new Valine({
+        el: "#valine_thread",
+        appId: "epr01NN7HOiKlcWCvdv8swkK-gzGzoHsz",
+        appKey: "tljBAMawJJHIlAT6oYAnGBz6",
+        avatar: "mm",
+        placeholder: "随便说点什么叭～",
+        notify: true,
+        visitor: true,
+        pageSize: 10,
+        enableQQ: true,
+      });
+    </script>
+  
+
+  
+  
+
+
+      </section>
+    </div>
+    <div class="widget-info">
+      <section class="widget-author widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-body">
+    
+      <img src="https://s.gravatar.com/avatar/e2d21bed4d6ff8daa412b6d5576c4061?s=80" class="soft-size--round soft-style--box" alt="KeyToLove">
+    
+    
+      <h2>KeyToLove</h2>
+    
+    
+      <p>Think twice code once</p>
+    
+
+    <div class="count-box">
+      <div class="count-box--item">
+        <svg class="icon icon-article" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M240.51564747 647.74217627h196.07203239c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806V165.10332731c0-33.18142087-30.16492806-60.32985613-60.32985612-60.32985611H245.04038668C225.43318342 104.7734712 210.35071939 119.85593522 210.35071939 139.46313845V617.57724821c0 16.59071043 13.57421762 30.16492806 30.16492808 30.16492806z m663.62841731-452.47392089v482.63884894c0 33.18142087-27.14843525 60.32985613-60.32985612 60.32985613H180.18579134c-33.18142087 0-60.32985613-27.14843525-60.32985612-60.32985613V195.26825538c-49.77213131 0-90.49478418 40.72265287-90.49478417 90.49478417v452.4739209c0 49.77213131 40.72265287 90.49478418 90.49478417 90.49478417h286.56681657c16.59071043 0 30.16492806 13.57421762 30.16492807 30.16492807s13.57421762 30.16492806 30.16492805 30.16492806h90.49478418c16.59071043 0 30.16492806-13.57421762 30.16492805-30.16492806s13.57421762-30.16492806 30.16492807-30.16492807h286.56681657c49.77213131 0 90.49478418-40.72265287 90.49478417-90.49478417V285.76303955c0-49.77213131-40.72265287-90.49478418-90.49478417-90.49478417zM587.41232014 647.74217627h191.54729318c19.60720323 0 34.68966726-15.08246403 34.68966729-34.68966727V134.93839925c0-16.59071043-13.57421762-30.16492806-30.16492808-30.16492805H617.57724821c-30.16492806 0-60.32985613 27.14843525-60.32985612 60.32985611v452.4739209c0 16.59071043 13.57421762 30.16492806 30.16492805 30.16492806z" fill="currentColor"></path>
+</svg>
+        <span>16</span>
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+        6
+      </div>
+      <div class="count-box--item">
+        <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+        6
+      </div>
+    </div>
+  </div>
+</section>
+
+      
+
+      
+<section class="widet-notice widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-notice" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M512 945.02305225v28.15620663a24.27259221 24.27259221 0 0 1-24.27259221 24.27259335H394.0352a48.54518557 48.54518557 0 0 1-41.74885888-23.78714112l-110.68302222-184.47170332a132.04290333 132.04290333 0 0 1-17.47626667-48.54518557h118.4502511a200.97706667 200.97706667 0 0 1 76.21594113 14.56355556l20.38897777 133.49925888a48.54518557 48.54518557 0 0 0 36.40888888 27.67075555l16.01991111 2.91271112a24.27259221 24.27259221 0 0 1 20.38897778 25.72894889zM997.45185223 463.45481443a194.18074112 194.18074112 0 0 1-38.8361489 116.50844445 24.75804445 24.75804445 0 0 1-36.4088889 0l-34.95253333-34.95253333a24.27259221 24.27259221 0 0 1-2.91271111-30.58346667 97.09036999 97.09036999 0 0 0 0-106.79940665 24.27259221 24.27259221 0 0 1 2.91271111-30.58346666l34.95253333-34.95253334a24.75804445 24.75804445 0 0 1 18.93262223-7.28177777 26.2144 26.2144 0 0 1 17.47626667 9.70903665A194.18074112 194.18074112 0 0 1 997.45185223 463.45481443z m-194.18074112-388.36148111v776.72296335a48.54518557 48.54518557 0 0 1-48.54518556 48.54518443h-28.64165888a48.54518557 48.54518557 0 0 1-33.98163001-14.07810332l-145.63555556-143.20829668A291.27111111 291.27111111 0 0 0 342.57730333 657.63555556H172.18370333a145.63555556 145.63555556 0 0 1-145.63555556-145.63555556v-97.09036999a145.63555556 145.63555556 0 0 1 145.63555556-145.63555556h170.3936a291.27111111 291.27111111 0 0 0 206.31703779-85.43952668l145.63555555-143.20829554a48.54518557 48.54518557 0 0 1 33.98162888-14.07810446H754.72592555a48.54518557 48.54518557 0 0 1 48.54518556 48.54518555z" fill="currentColor"></path>
+</svg>
+    <span>NOTICE</span>
+  </div>
+  <div class="widget-body">
+    <p>Hi there 👋 Welcome to my blog space,hope you hava a good day~</p>
+  </div>
+</section>
+
+
+      <section class="widget-categorys widget-item layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-categories" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M900.3614811 257.09082106h-339.81629553l-67.96326003-101.9448889c-19.41807444-29.12711113-48.54518557-43.69066667-82.52681443-43.69066667H123.6385189c-53.39970333 0-97.09036999 43.69066667-97.09037113 97.09036999v582.54222222c0 53.39970333 43.69066667 97.09036999 97.09037113 97.09037002h776.7229622c53.39970333 0 97.09036999-43.69066667 97.09037113-97.09037002V354.18119104c0-53.39970333-43.69066667-97.09036999-97.09037113-97.09036998z m-97.09036999 242.72592554H220.72888889c-24.27259221 0-48.54518557-24.27259221-48.54518556-48.54518556s24.27259221-48.54518557 48.54518556-48.54518444h582.54222222c24.27259221 0 48.54518557 24.27259221 48.54518556 48.54518444s-24.27259221 48.54518557-48.54518556 48.54518556z" fill="currentColor"></path>
+</svg>
+    <span>CATEGORYS</span>
+  </div>
+  <div class="widget-body">
+    <ul class="categorys-list">
+      
+        <li class="categorys-list-item">
+          <a href="/categories/AI/">
+            AI (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/%E6%BA%90%E7%A0%81/">
+            源码 (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/%E7%AE%97%E6%B3%95/">
+            算法 (8)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/life/">
+            life (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/test/">
+            test (1)
+          </a>
+        </li>
+      
+        <li class="categorys-list-item">
+          <a href="/categories/%E5%89%8D%E7%AB%AF%E5%B7%A5%E7%A8%8B%E5%8C%96/">
+            前端工程化 (3)
+          </a>
+        </li>
+      
+    </ul>
+  </div>
+</section>
+
+      <section class="widget-tags widget-item  layout-margin content-padding--primary soft-size--large soft-style--box">
+  <div class="widget-title">
+    <svg class="icon icon-tags" viewBox="0 0 1098 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M283.42180005 272q0-28.38857157-20.09142843-48.48000001t-48.47999998-20.09142842-48.48000002 20.09142842-20.09142846 48.48000001 20.09142846 48.48 48.48000002 20.09142843 48.47999998-20.09142843 20.09142843-48.48zM855.0332285 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.03999997 263.58857157q-20.9142853 19.81714313-48.75428534 19.81714312-28.38857157 0-48.20571468-19.81714312l-383.04-383.58857157q-20.36571468-19.81714313-34.55999999-54.10285688t-14.19428534-62.6742853l0-222.85714313q0-27.84000002 20.36571469-48.20571469t48.2057147-20.36571466l222.85714313 0q28.38857157 0 62.6742853 14.19428529t54.65142842 34.55999999l383.04000001 382.49142843q19.81714313 20.9142853 19.81714314 48.75428532zM1060.74751475 580.57142843q0 28.38857157-19.81714313 48.2057147l-263.04 263.58857157q-20.9142853 19.81714313-48.75428531 19.81714312-19.26857155 0-31.61142843-7.47428531t-28.38857159-24.13714314l251.79428534-251.7942853q19.81714313-19.81714313 19.81714308-48.20571469 0-27.84000002-19.81714308-48.75428531l-383.04000001-382.49142845q-20.36571468-20.36571468-54.65142842-34.55999999t-62.67428532-14.19428534l120 0q28.38857157 0 62.67428532 14.19428534t54.65142842 34.55999999l383.03999998 382.49142845q19.81714313 20.9142853 19.81714314 48.75428531z" fill="currentColor"></path>
+</svg>
+    <span>TAGS</span>
+  </div>
+  <div class="widget-body">
+    <div class="tags-cloud">
+      <a href="/tags/DX/" style="font-size: 10px;" class="tags-cloud-0">DX</a> <a href="/tags/LRU/" style="font-size: 10px;" class="tags-cloud-0">LRU</a> <a href="/tags/React/" style="font-size: 10px;" class="tags-cloud-0">React</a> <a href="/tags/hexo/" style="font-size: 10px;" class="tags-cloud-0">hexo</a> <a href="/tags/leetcode/" style="font-size: 20px;" class="tags-cloud-10">leetcode</a> <a href="/tags/webpack/" style="font-size: 15px;" class="tags-cloud-5">webpack</a>
+    </div>
+  </div>
+</section>
+    </div>
+  </article>
+</div>
+
+    <!-- footer container -->
+<footer id="footer" class="footer">
+  <div class="footer-container">
+    
+    <div class="social-icons">
+      
+        
+      
+        
+      
+        
+      
+        
+          <a href="https://github.com/KeyToLove" class="soft-size--primary soft-style--box" target="_blank" rel="noopener noreferrer">
+            <svg class="icon icon-github" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <path d="M64.6 512c0 195.6 125.4 361.9 300.1 422.9 23.5 5.9 19.9-10.8 19.9-22.2v-77.6c-135.8 15.9-141.3-74-150.5-89-18.5-31.5-61.9-39.5-49-54.5 31-15.9 62.5 4 98.9 58 26.4 39.1 77.9 32.5 104.1 26 5.7-23.5 17.9-44.5 34.7-60.9-140.7-25.2-199.4-111.1-199.4-213.3 0-49.5 16.4-95.1 48.4-131.8-20.4-60.6 1.9-112.4 4.9-120.1 58.2-5.2 118.5 41.6 123.3 45.3 33.1-8.9 70.8-13.7 112.9-13.7 42.4 0 80.3 4.9 113.5 13.9 11.3-8.6 67.3-48.8 121.4-43.9 2.9 7.7 24.7 58.3 5.5 118.1 32.5 36.8 49 82.8 49 132.4 0 102.3-59 188.3-200.2 213.2 23.5 23.3 38.1 55.5 38.1 91.1v112.7c0.8 9 0 17.9 15.1 17.9C832.7 877 960.4 709.4 960.4 512.1c0-247.5-200.6-447.9-447.9-447.9C265 64.1 64.6 264.5 64.6 512z"></path>
+</svg>
+          </a>
+        
+      
+        
+      
+    </div>
+     
+    <p>&copy; 2024 <a href="https://github.com/KeyToLove/KeyToLove.github.io" target="_blank">KeyToLove</a></p>
+
+    
+
+    <p>Powered by <a href="https://hexo.io" target="_blank" rel="noopener noreferrer">Hexo</a> Theme - <a href="https://github.com/miiiku/flex-block" target="_blank" rel="noopener noreferrer author">flex-block</a></p>
+
+    <p>
+      <a href="javascript:;" id="theme-light">🌞 浅色</a>
+      <a href="javascript:;" id="theme-dark">🌛 深色</a>
+      <a href="javascript:;" id="theme-auto">🤖️ 自动</a>
+    </p>
+  </div>
+</footer>
+  </div>
+
+  <div class="back-to-top-fixed soft-size--round soft-style--box">
+    <svg class="icon icon-back-to-top" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <path d="M725.333333 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8l-213.333333-213.333333c-17.066667-17.066667-17.066667-42.666667 0-59.733333s42.666667-17.066667 59.733333 0l213.333333 213.333333c17.066667 17.066667 17.066667 42.666667 0 59.733333C746.666667 422.4 738.133333 426.666667 725.333333 426.666667z"></path>
+      <path d="M298.666667 426.666667c-12.8 0-21.333333-4.266667-29.866667-12.8-17.066667-17.066667-17.066667-42.666667 0-59.733333l213.333333-213.333333c17.066667-17.066667 42.666667-17.066667 59.733333 0s17.066667 42.666667 0 59.733333l-213.333333 213.333333C320 422.4 311.466667 426.666667 298.666667 426.666667z"></path>
+      <path d="M512 896c-25.6 0-42.666667-17.066667-42.666667-42.666667L469.333333 170.666667c0-25.6 17.066667-42.666667 42.666667-42.666667s42.666667 17.066667 42.666667 42.666667l0 682.666667C554.666667 878.933333 537.6 896 512 896z"></path>
+    </svg>
+  </div>
+
+  
+  <!-- aplayer -->
+
+
+<!-- dplayer -->
+
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+  
+  <!-- 尾部用户自定义相关内容 -->
+<script src="https://cdn.jsdelivr.net/npm/@docsearch/js@3"></script>
+
+<script type="text/javascript">
+
+  docsearch({
+
+    appId: 'WEPZYOD6FH',
+
+    apiKey: 'db767917d4cc9abba669fc4196fd3262',
+
+    indexName: 'keytolove',
+
+    container: '#doc-search',
+
+    placeholder:'试试搜索点什么～',
+
+    debug: false // Set debug to true if you want to inspect the modal
+
+  });
+
+</script>
+</body>
+</html>
